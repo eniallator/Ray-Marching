@@ -3,7 +3,7 @@ class Ray {
     this.initialPos = pos.copy();
     this.pos = pos.copy();
     this.dirNorm = dirNorm;
-    this.collisionTolerance = 5;
+    this.collisionTolerance = 1;
 
     this.path = [];
   }

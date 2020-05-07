@@ -16,7 +16,7 @@ class Scene {
 
   distanceEstimator(vec) {
     const distances = this.objectList.map((obj) => obj.distanceEstimator(vec));
-    return Math.min(...distances);
+    return Math.max(0, Math.min(...distances));
   }
 
   draw(ctx) {
