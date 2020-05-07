@@ -6,22 +6,46 @@ const aspectRatio = 16 / 9;
 const noScrollbarOffset = 3;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-if (canvas.width / canvas.height > aspectRatio) {
-  canvas.width -= canvas.width - canvas.height * aspectRatio;
-} else if (canvas.width / canvas.height < aspectRatio) {
-  canvas.height -= canvas.height - canvas.width * aspectRatio;
-}
 
 canvas.width -= noScrollbarOffset;
 canvas.height -= noScrollbarOffset;
 
-ctx.fillStyle = "black";
 ctx.strokeStyle = "white";
 
-function run() {
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+const mouse = Vector.ZERO.copy();
+let mouseMoved = true;
 
-  // Animation code
+canvas.onmousemove = (ev) => {
+  mouse.setHead(ev.clientX, ev.clientY);
+  mouseMoved = true;
+};
+canvas.ontouchmove = (ev) => {
+  mouse.setHead(ev.touches[0].clientX, ev.touches[0].clientY);
+  mouseMoved = true;
+};
+
+const scene = new Scene(0, 0, canvas.width, canvas.height);
+const numRays = 180;
+
+function run() {
+  if (mouseMoved) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+
+    scene.draw(ctx);
+
+    for (let i = 0; i < numRays; i++) {
+      const angle = (i * Math.PI * 2) / numRays;
+      const dir = new Vector(Math.sin(angle), Math.cos(angle));
+
+      const ray = new Ray(mouse, dir);
+      ray.cast(scene);
+      ray.draw(ctx);
+    }
+
+    mouseMoved = false;
+  }
 
   requestAnimationFrame(run);
 }
