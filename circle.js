@@ -5,8 +5,6 @@ class Circle {
   }
 
   distanceEstimator(vec) {
-    console.log(this.pos, vec, this.radius);
-
     return this.pos.copy().sub(vec).getMagnitude() - this.radius;
   }
 
