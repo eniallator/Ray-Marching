@@ -5,6 +5,14 @@ class BoundingBox {
     this.height = height;
   }
 
+  get x() {
+    return this.pos.x;
+  }
+
+  get y() {
+    return this.pos.y;
+  }
+
   vectorInside(vec) {
     return (
       vec.x >= this.pos.x &&

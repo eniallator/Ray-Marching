@@ -1,8 +1,13 @@
 class Scene {
   constructor(x, y, width, height) {
     this.box = new BoundingBox(x, y, width, height);
-    this.circlePos = new Vector(x + width / 2, y + height / 2);
-    this.circleRadius = 200;
+    // this.circlePos = new Vector(x + width / 2, y + height / 2);
+    // this.circleRadius = 200;
+    const center = new Vector(x + width / 2, y + height / 2);
+    this.objectList = [
+      new Circle(center.x - 90, center.y, 100),
+      new Rectangle(center.x - 10, center.y - 100, 200, 200),
+    ];
   }
 
   checkInBounds(vec) {
@@ -10,20 +15,15 @@ class Scene {
   }
 
   distanceEstimator(vec) {
-    const dist =
-      this.circlePos.copy().sub(vec).getMagnitude() - this.circleRadius;
-    return Math.max(dist, 0);
+    const distances = this.objectList.map((obj) => obj.distanceEstimator(vec));
+    return Math.min(...distances);
   }
 
   draw(ctx) {
-    // ctx.beginPath();
-    // ctx.arc(
-    //   this.circlePos.x,
-    //   this.circlePos.y,
-    //   this.circleRadius,
-    //   0,
-    //   2 * Math.PI
-    // );
-    // ctx.fill();
+    ctx.globalAlpha = 0.2;
+    for (let obj of this.objectList) {
+      obj.draw(ctx);
+    }
+    ctx.globalAlpha = 1;
   }
 }
