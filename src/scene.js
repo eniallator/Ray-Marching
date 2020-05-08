@@ -17,6 +17,7 @@ class Scene {
     //     )
     //   );
     this.objectList = [
+      this.rect,
       new Circle(rainbow, center.x - 90, center.y, 200),
       new Rectangle(rainbow, center.x - 10, center.y - 100, 200, 200),
       // new Mandelbrot(center.x, center.y, 100),
@@ -30,14 +31,11 @@ class Scene {
   }
 
   getColour(vec) {
-    let d;
-    const closestObj = this.objectList.reduce(
-      (closest, curr) =>
-        closest === null || (d = curr.distanceEstimator(vec)) < closest.d
-          ? { obj: curr, d: d }
-          : closest,
-      { obj: this.rect, d: this.rect.distanceEstimator(vec) }
-    );
+    const closestObj = this.objectList.reduce((closest, curr) => {
+      const d = curr.distanceEstimator(vec);
+      return closest === 1 || d < closest.d ? { obj: curr, d: d } : closest;
+    }, 1);
+
     return closestObj.obj.getColour(vec);
   }
 
