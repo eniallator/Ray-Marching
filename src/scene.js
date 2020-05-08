@@ -32,7 +32,8 @@ class Scene {
 
   getColour(vec) {
     const closestObj = this.objectList.reduce((closest, curr) => {
-      const d = curr.distanceEstimator(vec);
+      const rawDist = curr.distanceEstimator(vec);
+      const d = rawDist.getMagnitude ? rawDist.getMagnitude() : rawDist;
       return closest === 1 || d < closest.d ? { obj: curr, d: d } : closest;
     }, 1);
 
@@ -41,8 +42,24 @@ class Scene {
 
   distanceEstimator(vec) {
     const distances = this.objectList.map((obj) => obj.distanceEstimator(vec));
+    let rawDist;
+    let dist;
+    for (let curr of distances) {
+      const currDist = isNaN(curr) ? curr.getMagnitude() : curr;
+      if (dist === undefined || currDist < dist) {
+        rawDist = curr;
+        dist = currDist;
+      }
+    }
+    // console.log(dist, distances);
 
-    return Math.max(0, Math.min(...distances));
+    return rawDist;
+
+    // return Math.max(0, Math.min(...distances));
+    // return Math.max(
+    //   0,
+    //   Math.min(distances[0], Math.max(distances[1], distances[2]))
+    // );
   }
 
   draw(ctx) {

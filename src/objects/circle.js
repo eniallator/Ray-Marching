@@ -7,7 +7,12 @@ class Circle extends BaseObject {
   }
 
   distanceEstimator(vec) {
-    return this.pos.copy().sub(vec).getMagnitude() - this.diameter / 2;
+    const diff = this.pos.copy().sub(vec);
+    if (diff.getMagnitude() < this.diameter / 2) {
+      return Vector.ZERO.copy();
+    }
+    diff.setMagnitude(diff.getMagnitude() - this.diameter / 2);
+    return diff;
   }
 
   getColour(vec) {

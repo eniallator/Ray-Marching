@@ -16,9 +16,9 @@ class BoundingBox {
   vectorInside(vec) {
     return (
       vec.x >= this.pos.x &&
-      vec.x < this.pos.x + this.width &&
+      vec.x <= this.pos.x + this.width &&
       vec.y >= this.pos.y &&
-      vec.y < this.pos.y + this.height
+      vec.y <= this.pos.y + this.height
     );
   }
 }
