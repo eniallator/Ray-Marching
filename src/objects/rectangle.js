@@ -47,6 +47,12 @@ class Rectangle extends BaseObject {
     return this.material.getColour(dx + dy);
   }
 
+  getSurfaceNormal(vec) {
+    const diff = vec.copy().sub(this.center);
+    const xBigger = Math.abs(diff.x) > Math.abs(diff.y);
+    return diff.getSign().multiply(new Vector(+xBigger, 1 - xBigger));
+  }
+
   draw(ctx) {
     ctx.fillRect(this.box.x, this.box.y, this.box.width, this.box.height);
   }

@@ -25,9 +25,9 @@ canvas.ontouchmove = (ev) => {
 };
 
 const scene = new Scene(0, 0, canvas.width, canvas.height);
-const numRays = 1440;
+// const numRays = 720;
 // const numRays = 2880;
-// const numRays = 4;
+const numRays = 20;
 
 function run() {
   if (mouseMoved) {

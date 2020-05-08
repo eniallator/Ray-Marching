@@ -40,6 +40,10 @@ class Vector {
     return this;
   }
 
+  dot(other) {
+    return this.x * other.x + this.y * other.y;
+  }
+
   getMax() {
     return Math.max(this.x, this.y);
   }
@@ -74,6 +78,12 @@ class Vector {
   getNorm() {
     const magnitude = this.getMagnitude();
     return new Vector(this.x / magnitude, this.y / magnitude);
+  }
+
+  getSign() {
+    const x = this.x ? this.x / Math.abs(this.x) : 1;
+    const y = this.y ? this.y / Math.abs(this.y) : 1;
+    return new Vector(x, y);
   }
 
   copy() {

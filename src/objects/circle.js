@@ -29,6 +29,10 @@ class Circle extends BaseObject {
     return this.material.getColour(dx + dy);
   }
 
+  getSurfaceNormal(vec) {
+    return vec.copy().sub(this.pos).getNorm();
+  }
+
   draw(ctx) {
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, this.diameter / 2, 0, 2 * Math.PI);

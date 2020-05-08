@@ -4,29 +4,47 @@ class Ray {
     this.pos = pos.copy();
     this.dirNorm = dirNorm;
     this.collisionTolerance = 1;
-    this.forceInfluence = 0.04;
+    // this.forceInfluence = 0.04;
+    this.forceInfluence = 0;
+    this.maxBounces = 10;
 
+    this.collisionPoints = [];
     this.path = [];
   }
 
   cast(sceneObj) {
     let step = this.collisionTolerance;
+    let bounces = 0;
     while (
-      step >= this.collisionTolerance &&
+      bounces <= this.maxBounces &&
       (this.inBounds = sceneObj.checkInBounds(this.pos))
     ) {
       step = sceneObj.distanceEstimator(this.pos);
 
       this.path.push({ pos: this.pos.copy(), step: step });
-      const offset = this.dirNorm.copy().multiply(step);
-      this.pos.add(offset);
 
-      this.dirNorm = this.dirNorm
-        .add(sceneObj.getForceAt(this.pos).multiply(this.forceInfluence))
-        .getNorm();
+      if (step < this.collisionTolerance) {
+        bounces++;
+        const surfaceNormal = sceneObj.getClosestSurfaceNormal(this.pos);
+        this.dirNorm = this.dirNorm.sub(
+          surfaceNormal.copy().multiply(2 * this.dirNorm.dot(surfaceNormal))
+        );
+
+        this.collisionPoints.push({
+          pos: this.pos.copy(),
+          colour: sceneObj.getColour(this.pos),
+          inBounds: sceneObj.checkInBounds(this.pos),
+        });
+
+        this.pos.add(this.dirNorm.copy().multiply(this.collisionTolerance));
+      } else {
+        const offset = this.dirNorm.copy().multiply(step);
+        this.pos.add(offset);
+        this.dirNorm = this.dirNorm
+          .add(sceneObj.getForceAt(this.pos).multiply(this.forceInfluence))
+          .getNorm();
+      }
     }
-
-    this.colour = sceneObj.getColour(this.pos);
   }
 
   draw(ctx) {
@@ -44,12 +62,14 @@ class Ray {
     ctx.lineTo(this.pos.x, this.pos.y);
     ctx.stroke();
 
-    if (this.inBounds) {
-      const oldFill = ctx.fillStyle;
-      ctx.fillStyle = this.colour;
+    for (let point of this.collisionPoints) {
+      if (point.inBounds) {
+        const oldFill = ctx.fillStyle;
+        ctx.fillStyle = point.colour;
 
-      ctx.fillRect(this.pos.x - 2, this.pos.y - 2, 4, 4);
-      ctx.fillStyle = oldFill;
+        ctx.fillRect(point.pos.x - 2, point.pos.y - 2, 4, 4);
+        ctx.fillStyle = oldFill;
+      }
     }
   }
 }
