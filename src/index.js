@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 const aspectRatio = 16 / 9;
 
-const noScrollbarOffset = 3;
+const noScrollbarOffset = 5;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -12,7 +12,7 @@ canvas.height -= noScrollbarOffset;
 
 ctx.strokeStyle = "white";
 
-const mouse = Vector.ZERO.copy();
+const mouse = Vector.ONE.copy();
 let mouseMoved = true;
 
 canvas.onmousemove = (ev) => {

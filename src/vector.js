@@ -3,28 +3,35 @@ class Vector {
     this.setHead(xOrVec, y);
   }
 
-  arithmeticOperation(vecOrNum, operation) {
-    if (isNaN(vecOrNum)) {
-      this.x = operation(this.x, vecOrNum.x);
-      this.y = operation(this.y, vecOrNum.y);
-    } else {
-      this.x = operation(this.x, vecOrNum);
-      this.y = operation(this.y, vecOrNum);
+  arithmeticOperation(args, operation) {
+    for (let arg of args) {
+      if (isNaN(arg)) {
+        this.x = operation(this.x, arg.x);
+        this.y = operation(this.y, arg.y);
+      } else {
+        this.x = operation(this.x, arg);
+        this.y = operation(this.y, arg);
+      }
     }
   }
 
-  add(vecOrNum) {
-    this.arithmeticOperation(vecOrNum, (a, b) => a + b);
+  add(...args) {
+    this.arithmeticOperation(args, (a, b) => a + b);
     return this;
   }
 
-  sub(vecOrNum) {
-    this.arithmeticOperation(vecOrNum, (a, b) => a - b);
+  sub(...args) {
+    this.arithmeticOperation(args, (a, b) => a - b);
     return this;
   }
 
-  multiply(vecOrNum) {
-    this.arithmeticOperation(vecOrNum, (a, b) => a * b);
+  multiply(...args) {
+    this.arithmeticOperation(args, (a, b) => a * b);
+    return this;
+  }
+
+  divide(...args) {
+    this.arithmeticOperation(args, (a, b) => a / b);
     return this;
   }
 
@@ -38,8 +45,18 @@ class Vector {
     }
   }
 
+  getSquaredMagnitude() {
+    return this.x ** 2 + this.y ** 2;
+  }
+
   getMagnitude() {
-    return Math.sqrt(this.x ** 2 + this.y ** 2);
+    return Math.sqrt(this.getSquaredMagnitude());
+  }
+
+  setMagnitude(mag) {
+    const magRatio = mag / this.getMagnitude();
+    this.x *= magRatio;
+    this.y *= magRatio;
   }
 
   getNorm() {

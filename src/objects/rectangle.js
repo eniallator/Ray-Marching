@@ -1,5 +1,7 @@
-class Rectangle {
-  constructor(x, y, width, height) {
+class Rectangle extends BaseObject {
+  constructor(material, x, y, width, height) {
+    super(material);
+
     this.box = new BoundingBox(x, y, width, height);
   }
 
@@ -16,6 +18,13 @@ class Rectangle {
     );
 
     return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  getColour(vec) {
+    const dx = (vec.x - this.box.x) / this.box.width;
+    const dy = (vec.y - this.box.y) / this.box.height;
+
+    return this.material.getColour(dx + dy);
   }
 
   draw(ctx) {

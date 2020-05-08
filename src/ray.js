@@ -15,10 +15,13 @@ class Ray {
       (this.inBounds = sceneObj.checkInBounds(this.pos))
     ) {
       step = sceneObj.distanceEstimator(this.pos);
+
       this.path.push({ pos: this.pos.copy(), step: step });
       const offset = this.dirNorm.copy().multiply(step);
       this.pos.add(offset);
     }
+
+    this.colour = sceneObj.getColour(this.pos);
   }
 
   draw(ctx) {
@@ -34,7 +37,11 @@ class Ray {
     ctx.stroke();
 
     if (this.inBounds) {
+      const oldFill = ctx.fillStyle;
+      ctx.fillStyle = this.colour;
+
       ctx.fillRect(this.pos.x - 2, this.pos.y - 2, 4, 4);
+      ctx.fillStyle = oldFill;
     }
   }
 }
