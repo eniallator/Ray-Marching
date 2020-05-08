@@ -4,7 +4,7 @@ class Ray {
     this.pos = pos.copy();
     this.dirNorm = dirNorm;
     this.collisionTolerance = 1;
-    this.objectDirectionInfluence = 0.05;
+    this.forceInfluence = 0.04;
 
     this.path = [];
   }
@@ -15,18 +15,15 @@ class Ray {
       step >= this.collisionTolerance &&
       (this.inBounds = sceneObj.checkInBounds(this.pos))
     ) {
-      const stepVec = sceneObj.distanceEstimator(this.pos);
-      step = isNaN(stepVec) ? stepVec.getMagnitude() : stepVec;
+      step = sceneObj.distanceEstimator(this.pos);
 
       this.path.push({ pos: this.pos.copy(), step: step });
       const offset = this.dirNorm.copy().multiply(step);
       this.pos.add(offset);
 
-      if (isNaN(stepVec)) {
-        this.dirNorm = this.dirNorm.add(
-          stepVec.getNorm().multiply(this.objectDirectionInfluence)
-        );
-      }
+      this.dirNorm = this.dirNorm
+        .add(sceneObj.getForceAt(this.pos).multiply(this.forceInfluence))
+        .getNorm();
     }
 
     this.colour = sceneObj.getColour(this.pos);
@@ -39,18 +36,11 @@ class Ray {
     //   ctx.stroke();
     // }
 
-    let prevPos = this.initialPos;
-
-    for (let i in this.path) {
-      ctx.beginPath();
-      ctx.moveTo(prevPos.x, prevPos.y);
-      ctx.lineTo(this.path[i].pos.x, this.path[i].pos.y);
-      ctx.stroke();
-      prevPos = this.path[i].pos;
-    }
-
     ctx.beginPath();
-    ctx.moveTo(prevPos.x, prevPos.y);
+    ctx.moveTo(this.initialPos.x, this.initialPos.y);
+    for (let item of this.path) {
+      ctx.lineTo(item.pos.x, item.pos.y);
+    }
     ctx.lineTo(this.pos.x, this.pos.y);
     ctx.stroke();
 

@@ -6,13 +6,20 @@ class Circle extends BaseObject {
     this.diameter = diameter;
   }
 
-  distanceEstimator(vec) {
+  getForceAt(vec, gravityFallOff) {
     const diff = this.pos.copy().sub(vec);
-    if (diff.getMagnitude() < this.diameter / 2) {
+    const mag = diff.getMagnitude();
+    if (mag < this.diameter / 2 || mag > gravityFallOff + this.diameter / 2) {
       return Vector.ZERO.copy();
     }
-    diff.setMagnitude(diff.getMagnitude() - this.diameter / 2);
+    diff.setMagnitude(
+      1 - (diff.getMagnitude() - this.diameter / 2) / gravityFallOff
+    );
     return diff;
+  }
+
+  distanceEstimator(vec) {
+    return this.pos.copy().sub(vec).getMagnitude() - this.diameter / 2;
   }
 
   getColour(vec) {

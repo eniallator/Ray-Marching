@@ -29,5 +29,8 @@ class InsideRectangle extends Rectangle {
     return "black";
   }
 
+  getForceAt(vec) {
+    return Vector.ZERO.copy();
+  }
   draw(ctx) {}
 }

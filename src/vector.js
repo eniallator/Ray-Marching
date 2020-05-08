@@ -15,6 +15,11 @@ class Vector {
     }
   }
 
+  pow(...args) {
+    this.arithmeticOperation(args, (a, b) => a ** b);
+    return this;
+  }
+
   add(...args) {
     this.arithmeticOperation(args, (a, b) => a + b);
     return this;

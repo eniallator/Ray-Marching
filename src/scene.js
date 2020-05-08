@@ -1,5 +1,7 @@
 class Scene {
   constructor(x, y, width, height) {
+    this.gravityFallOff = Math.sqrt(width * width + height * height);
+
     const rainbow = new Rainbow();
 
     this.rect = new InsideRectangle(rainbow, x, y, width, height);
@@ -17,14 +19,6 @@ class Scene {
         )
       );
     this.objectList.push(this.rect);
-    // this.objectList = [
-    //   this.rect,
-    //   new Circle(rainbow, center.x - 90, center.y, 200),
-    //   new Rectangle(rainbow, center.x - 10, center.y - 100, 200, 200),
-    //   // new Mandelbrot(center.x, center.y, 100),
-    // ];
-
-    this.objectList;
   }
 
   checkInBounds(vec) {
@@ -33,34 +27,26 @@ class Scene {
 
   getColour(vec) {
     const closestObj = this.objectList.reduce((closest, curr) => {
-      const rawDist = curr.distanceEstimator(vec);
-      const d = rawDist.getMagnitude ? rawDist.getMagnitude() : rawDist;
+      const d = curr.distanceEstimator(vec);
       return closest === 1 || d < closest.d ? { obj: curr, d: d } : closest;
     }, 1);
 
     return closestObj.obj.getColour(vec);
   }
 
+  getForceAt(vec) {
+    return this.objectList
+      .reduce(
+        (total, curr) => total.add(curr.getForceAt(vec, this.gravityFallOff)),
+        Vector.ZERO.copy()
+      )
+      .divide(this.objectList.length);
+  }
+
   distanceEstimator(vec) {
     const distances = this.objectList.map((obj) => obj.distanceEstimator(vec));
-    let rawDist;
-    let dist;
-    for (let curr of distances) {
-      const currDist = isNaN(curr) ? curr.getMagnitude() : curr;
-      if (dist === undefined || currDist < dist) {
-        rawDist = curr;
-        dist = currDist;
-      }
-    }
-    // console.log(dist, distances);
 
-    return rawDist;
-
-    // return Math.max(0, Math.min(...distances));
-    // return Math.max(
-    //   0,
-    //   Math.min(distances[0], Math.max(distances[1], distances[2]))
-    // );
+    return Math.max(0, Math.min(...distances));
   }
 
   draw(ctx) {
