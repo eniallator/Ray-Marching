@@ -4,24 +4,25 @@ class Scene {
 
     this.rect = new InsideRectangle(rainbow, x, y, width, height);
     const center = new Vector(x + width / 2, y + height / 2);
-    // let objX, objY;
-    // this.objectList = new Array(10)
-    //   .fill()
-    //   .map(
-    //     (_) => (
-    //       (objX = x + Math.random() * width),
-    //       (objY = y + Math.random() * height),
-    //       Math.random() < 0.5
-    //         ? new Circle(objX, objY, 200)
-    //         : new Rectangle(objX, objY, 200, 200)
-    //     )
-    //   );
-    this.objectList = [
-      this.rect,
-      new Circle(rainbow, center.x - 90, center.y, 200),
-      new Rectangle(rainbow, center.x - 10, center.y - 100, 200, 200),
-      // new Mandelbrot(center.x, center.y, 100),
-    ];
+    let objX, objY;
+    this.objectList = new Array(10)
+      .fill()
+      .map(
+        (_) => (
+          (objX = x + Math.random() * width),
+          (objY = y + Math.random() * height),
+          Math.random() < 0.5
+            ? new Circle(rainbow, objX, objY, 200)
+            : new Rectangle(rainbow, objX, objY, 200, 200)
+        )
+      );
+    this.objectList.push(this.rect);
+    // this.objectList = [
+    //   this.rect,
+    //   new Circle(rainbow, center.x - 90, center.y, 200),
+    //   new Rectangle(rainbow, center.x - 10, center.y - 100, 200, 200),
+    //   // new Mandelbrot(center.x, center.y, 100),
+    // ];
 
     this.objectList;
   }
