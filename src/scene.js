@@ -2,9 +2,7 @@ class Scene {
   constructor(x, y, width, height) {
     this.gravityFallOff = Math.sqrt(width * width + height * height);
 
-    const rainbow = new Rainbow();
-
-    this.rect = new InsideRectangle(rainbow, x, y, width, height);
+    this.rect = new InsideRectangle(new Clear(), x, y, width, height);
     const center = new Vector(x + width / 2, y + height / 2);
     let objX, objY;
     this.objectList = new Array(10)
@@ -14,11 +12,11 @@ class Scene {
           (objX = x + Math.random() * width),
           (objY = y + Math.random() * height),
           Math.random() < 0.5
-            ? new Circle(rainbow, objX, objY, 200)
-            : new Rectangle(rainbow, objX, objY, 200, 200)
+            ? new Circle(new Rainbow(), objX, objY, 200)
+            : new Rectangle(new Rainbow(), objX, objY, 200, 200)
         )
       );
-    this.objectList.push(this.rect);
+    // this.objectList.push(this.rect);
   }
 
   checkInBounds(vec) {

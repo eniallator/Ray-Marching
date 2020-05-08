@@ -40,6 +40,13 @@ class Vector {
     return this;
   }
 
+  getMax() {
+    return Math.max(this.x, this.y);
+  }
+  getMin() {
+    return Math.min(this.x, this.y);
+  }
+
   setHead(xOrVec, y) {
     if (isNaN(y)) {
       this.x = xOrVec.x;
