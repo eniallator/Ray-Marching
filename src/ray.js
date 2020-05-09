@@ -6,7 +6,7 @@ class Ray {
     this.collisionTolerance = 1;
     // this.forceInfluence = 0.04;
     this.forceInfluence = 0;
-    this.maxBounces = 10;
+    this.maxBounces = 0;
 
     this.collisionPoints = [];
     this.path = [];
@@ -24,11 +24,12 @@ class Ray {
       this.path.push({ pos: this.pos.copy(), step: step });
 
       if (step < this.collisionTolerance) {
-        bounces++;
-        const surfaceNormal = sceneObj.getClosestSurfaceNormal(this.pos);
-        this.dirNorm = this.dirNorm.sub(
-          surfaceNormal.copy().multiply(2 * this.dirNorm.dot(surfaceNormal))
-        );
+        if (++bounces <= this.maxBounces) {
+          const surfaceNormal = sceneObj.getClosestSurfaceNormal(this.pos);
+          this.dirNorm = this.dirNorm.sub(
+            surfaceNormal.copy().multiply(2 * this.dirNorm.dot(surfaceNormal))
+          );
+        }
 
         this.collisionPoints.push({
           pos: this.pos.copy(),
