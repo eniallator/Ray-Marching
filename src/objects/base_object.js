@@ -1,8 +1,8 @@
 class BaseObject {
-  constructor(material, centerOfMass, mass) {
+  constructor(material, centerOfMass, area) {
     this.material = material;
     this.centerOfMass = centerOfMass;
-    this.mass = mass;
+    this.mass = material.calcMass(area);
   }
 
   getForceAt(vec, gravityFallOff) {
