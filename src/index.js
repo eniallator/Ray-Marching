@@ -31,8 +31,8 @@ const scene = new Scene(0, 0, canvas.width, canvas.height);
 // const numRays = 2880;
 const numRays = 20;
 
-const timeToRepeat = 10000;
-const noiseScale = 0.1;
+const timeToRepeat = 30000;
+const noiseScale = 0.5;
 let prevTime = new Date().getTime();
 let currTime = 0;
 
