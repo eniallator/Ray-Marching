@@ -39,11 +39,14 @@ $("#use-mouse")
 $("#num-rays")
   .change((evt) => (config.numRays = +$(evt.target).val()))
   .trigger("change");
-$("#ray-angle-offset")
-  .change((evt) => (config.rayAngleOffset = +$(evt.target).val()))
-  .trigger("change");
 $("#max-reflections")
   .change((evt) => (config.maxReflections = +$(evt.target).val()))
+  .trigger("change");
+$("#max-step")
+  .change((evt) => (config.maxStep = +$(evt.target).val()))
+  .trigger("change");
+$("#ray-angle-offset")
+  .change((evt) => (config.rayAngleOffset = +$(evt.target).val()))
   .trigger("change");
 $("#force-influence")
   .change((evt) => (config.forceInfluence = +$(evt.target).val()))
@@ -89,7 +92,8 @@ function run() {
         position,
         dir,
         config.maxReflections,
-        config.forceInfluence
+        config.forceInfluence,
+        config.maxStep
       );
       ray.cast(scene);
       ray.draw(ctx);

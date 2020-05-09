@@ -1,8 +1,10 @@
 class Rectangle extends BaseObject {
   constructor(material, x, y, width, height) {
-    super(material, new Vector(x + width / 2, y + height / 2), width * height);
+    const center = new Vector(x + width / 2, y + height / 2);
+    super(material, center, width * height);
 
     this.hypotenuse = Math.sqrt(width * width + height * height);
+    this.center = center;
     this.box = new BoundingBox(x, y, width, height);
   }
 

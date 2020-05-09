@@ -1,5 +1,5 @@
 class Ray {
-  constructor(pos, dirNorm, maxReflections, forceInfluence) {
+  constructor(pos, dirNorm, maxReflections, forceInfluence, maxStep) {
     this.initialPos = pos.copy();
     this.pos = pos.copy();
     this.dirNorm = dirNorm;
@@ -7,7 +7,7 @@ class Ray {
     this.forceInfluence = forceInfluence || 0;
 
     this.collisionTolerance = 1;
-    // this.forceInfluence = 0.04;
+    this.maxStep = maxStep;
 
     this.collisionPoints = [];
     this.path = [];
@@ -20,7 +20,11 @@ class Ray {
       reflections <= this.maxReflections &&
       (this.inBounds = sceneObj.checkInBounds(this.pos))
     ) {
-      step = sceneObj.distanceEstimator(this.pos);
+      const distToClosestObj = sceneObj.distanceEstimator(this.pos);
+      step =
+        this.maxStep > 0 && distToClosestObj > this.maxStep
+          ? this.maxStep
+          : distToClosestObj;
 
       this.path.push({ pos: this.pos.copy(), step: step });
 
