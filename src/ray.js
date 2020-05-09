@@ -8,7 +8,6 @@ class Ray {
     this.maxStep = maxStep;
 
     this.collisionTolerance = 1;
-    this.forceInfluenceConstant = 1 / 30;
     this.collisionPoints = [];
     this.path = [];
   }
@@ -48,9 +47,7 @@ class Ray {
         this.pos.add(offset);
         this.dirNorm = this.dirNorm
           .add(
-            sceneObj
-              .getForceAt(this.pos)
-              .multiply(this.forceInfluence, step, this.forceInfluenceConstant)
+            sceneObj.getForceAt(this.pos).multiply(this.forceInfluence, step)
           )
           .getNorm();
       }

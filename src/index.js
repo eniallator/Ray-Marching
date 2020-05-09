@@ -29,28 +29,61 @@ canvas.ontouchmove = (ev) => {
 const scene = new Scene(0, 0, canvas.width, canvas.height);
 
 const config = {};
+const setValConfig = (key) => (evt) => (config[key] = +$(evt.target).val());
+const setDefaultVal = (id, value) => $(id).val(value);
+const parameterConfig = {
+  useMouse: {
+    id: "use-mouse",
+    default: false,
+    setDefault: (id, value) => {
+      $(id).prop("checked", value);
+    },
+    change: (key) => (evt) => {
+      mouseMoved = true;
+      config[key] = $(evt.target).is(":checked");
+    },
+  },
+  numRays: {
+    id: "num-rays",
+    default: 720,
+    setDefault: setDefaultVal,
+    change: setValConfig,
+  },
+  maxReflections: {
+    id: "max-reflections",
+    default: 0,
+    setDefault: setDefaultVal,
+    change: setValConfig,
+  },
+  maxStep: {
+    id: "max-step",
+    default: 0,
+    setDefault: setDefaultVal,
+    change: setValConfig,
+  },
+  rayAngleOffset: {
+    id: "ray-angle-offset",
+    default: 0,
+    setDefault: setDefaultVal,
+    change: setValConfig,
+  },
+  forceInfluence: {
+    id: "force-influence",
+    default: 0,
+    setDefault: setDefaultVal,
+    change: setValConfig,
+  },
+};
 
-$("#use-mouse")
-  .change((evt) => {
-    mouseMoved = true;
-    config.useMouse = $(evt.target).is(":checked");
-  })
-  .trigger("change");
-$("#num-rays")
-  .change((evt) => (config.numRays = +$(evt.target).val()))
-  .trigger("change");
-$("#max-reflections")
-  .change((evt) => (config.maxReflections = +$(evt.target).val()))
-  .trigger("change");
-$("#max-step")
-  .change((evt) => (config.maxStep = +$(evt.target).val()))
-  .trigger("change");
-$("#ray-angle-offset")
-  .change((evt) => (config.rayAngleOffset = +$(evt.target).val()))
-  .trigger("change");
-$("#force-influence")
-  .change((evt) => (config.forceInfluence = +$(evt.target).val()))
-  .trigger("change");
+const initParams = () => {
+  for (let param in parameterConfig) {
+    const cfgData = parameterConfig[param];
+    const htmlElId = `#${cfgData.id}`;
+    $(htmlElId).change(cfgData.change(param));
+    cfgData.setDefault(htmlElId, cfgData.default);
+    $(htmlElId).trigger("change");
+  }
+};
 
 const timeToRepeat = 30000;
 const noiseScale = 0.5;
@@ -109,4 +142,5 @@ function run() {
   requestAnimationFrame(run);
 }
 
+initParams();
 run();

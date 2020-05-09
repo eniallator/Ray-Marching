@@ -17,7 +17,7 @@ class Scene {
             : new Rectangle(new Rainbow(), objX, objY, objSize, objSize)
         )
       );
-    // this.objectList.push(this.rect);
+    this.objectList.push(this.rect);
   }
 
   checkInBounds(vec) {
