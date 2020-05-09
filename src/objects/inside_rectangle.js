@@ -21,8 +21,8 @@ class InsideRectangle extends Rectangle {
     return this.material.getColour(percent);
   }
 
-  getForceAt(vec) {
-    return Vector.ZERO.copy();
+  getForceAt(vec, gravityFallOff) {
+    return super.getForceAt(vec, gravityFallOff).multiply(-1);
   }
   draw(ctx) {}
 }
