@@ -67,7 +67,10 @@ class Ray {
         const oldFill = ctx.fillStyle;
         ctx.fillStyle = point.colour;
 
-        ctx.fillRect(point.pos.x - 2, point.pos.y - 2, 4, 4);
+        ctx.beginPath();
+        ctx.arc(point.pos.x, point.pos.y, 2, 0, 2 * Math.PI);
+        ctx.fill();
+
         ctx.fillStyle = oldFill;
       }
     }
