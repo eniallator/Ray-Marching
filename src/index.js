@@ -28,13 +28,23 @@ canvas.ontouchmove = (ev) => {
 
 const scene = new Scene(0, 0, canvas.width, canvas.height);
 
+const paramRegex = /[?&]?([^=]+)=([^&]*)/g;
+const urlParams = {};
+let tokens;
+while ((tokens = paramRegex.exec(document.location.search))) {
+  urlParams[tokens[1]] = tokens[2];
+}
+
 const config = {};
 const setValConfig = (key) => (evt) => (config[key] = +$(evt.target).val());
 const setDefaultVal = (id, value) => $(id).val(value);
+const getVal = (id) => String($(id).val());
 const parameterConfig = {
   useMouse: {
     id: "use-mouse",
     default: false,
+    serialise: (id) => String($(id).prop("checked")),
+    deserialise: (val) => val.toLowerCase() === "true",
     setDefault: (id, value) => {
       $(id).prop("checked", value);
     },
@@ -46,30 +56,40 @@ const parameterConfig = {
   numRays: {
     id: "num-rays",
     default: 720,
+    serialise: getVal,
+    deserialise: Number,
     setDefault: setDefaultVal,
     change: setValConfig,
   },
   maxReflections: {
     id: "max-reflections",
     default: 0,
+    serialise: getVal,
+    deserialise: Number,
     setDefault: setDefaultVal,
     change: setValConfig,
   },
   maxStep: {
     id: "max-step",
     default: 0,
+    serialise: getVal,
+    deserialise: Number,
     setDefault: setDefaultVal,
     change: setValConfig,
   },
   rayAngleOffset: {
     id: "ray-angle-offset",
     default: 0,
+    serialise: getVal,
+    deserialise: Number,
     setDefault: setDefaultVal,
     change: setValConfig,
   },
   forceInfluence: {
     id: "force-influence",
     default: 0,
+    serialise: getVal,
+    deserialise: Number,
     setDefault: setDefaultVal,
     change: setValConfig,
   },
@@ -80,10 +100,35 @@ const initParams = () => {
     const cfgData = parameterConfig[param];
     const htmlElId = `#${cfgData.id}`;
     $(htmlElId).change(cfgData.change(param));
-    cfgData.setDefault(htmlElId, cfgData.default);
+    let val = cfgData.default;
+    if (urlParams[param] !== undefined) {
+      val = cfgData.deserialise(urlParams[param]);
+    }
+    cfgData.setDefault(htmlElId, val);
     $(htmlElId).trigger("change");
   }
 };
+
+new ClipboardJS("#share-btn", {
+  text: (trigger) => {
+    let params = "";
+    for (let param in parameterConfig) {
+      if (params !== "") {
+        params += "&";
+      }
+      const cfgData = parameterConfig[param];
+      params += param + "=" + cfgData.serialise(`#${cfgData.id}`);
+    }
+    return (
+      location.protocol +
+      "//" +
+      location.host +
+      location.pathname +
+      "?" +
+      params
+    );
+  },
+}).on("success", (evt) => alert("Copied share link to clipboard"));
 
 const timeToRepeat = 30000;
 const noiseScale = 0.5;
