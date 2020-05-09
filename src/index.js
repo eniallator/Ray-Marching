@@ -7,7 +7,7 @@ const aspectRatio = 16 / 9;
 
 const noScrollbarOffset = 5;
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.height = window.innerHeight - $("#parameter-config").height();
 
 canvas.width -= noScrollbarOffset;
 canvas.height -= noScrollbarOffset;
@@ -27,50 +27,77 @@ canvas.ontouchmove = (ev) => {
 };
 
 const scene = new Scene(0, 0, canvas.width, canvas.height);
-const numRays = 1440;
-// const numRays = 2880;
-// const numRays = 20;
+
+const config = {};
+
+$("#use-mouse")
+  .change((evt) => {
+    mouseMoved = true;
+    config.useMouse = $(evt.target).is(":checked");
+  })
+  .trigger("change");
+$("#num-rays")
+  .change((evt) => (config.numRays = +$(evt.target).val()))
+  .trigger("change");
+$("#ray-angle-offset")
+  .change((evt) => (config.rayAngleOffset = +$(evt.target).val()))
+  .trigger("change");
+$("#max-reflections")
+  .change((evt) => (config.maxReflections = +$(evt.target).val()))
+  .trigger("change");
+$("#force-influence")
+  .change((evt) => (config.forceInfluence = +$(evt.target).val()))
+  .trigger("change");
 
 const timeToRepeat = 30000;
 const noiseScale = 0.5;
 let prevTime = new Date().getTime();
 let currTime = 0;
 
+const getNoiseCoordinates = (percentRound) =>
+  new Vector(
+    (simplex.noise2D(
+      noiseScale * Math.sin(percentRound * Math.PI * 2),
+      noiseScale * Math.cos(percentRound * Math.PI * 2)
+    ) +
+      1) /
+      2,
+    (simplex.noise2D(
+      noiseScale * Math.sin(percentRound * Math.PI * 2) + 10000,
+      noiseScale * Math.cos(percentRound * Math.PI * 2) + 10000
+    ) +
+      1) /
+      2
+  ).multiply(new Vector(canvas.width, canvas.height));
+
 function run() {
-  // if (mouseMoved) {
-  const percentRound = currTime / timeToRepeat;
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "white";
+  if (!config.useMouse || mouseMoved) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
 
-  scene.draw(ctx);
+    scene.draw(ctx);
 
-  for (let i = 0; i < numRays; i++) {
-    const angle = Math.PI / 4 + (i * Math.PI * 2) / numRays;
-    const dir = new Vector(Math.sin(angle), Math.cos(angle));
-    // const position = mouse;
-    const position = new Vector(
-      (simplex.noise2D(
-        noiseScale * Math.sin(percentRound * Math.PI * 2),
-        noiseScale * Math.cos(percentRound * Math.PI * 2)
-      ) +
-        1) /
-        2,
-      (simplex.noise2D(
-        noiseScale * Math.sin(percentRound * Math.PI * 2) + 10000,
-        noiseScale * Math.cos(percentRound * Math.PI * 2) + 10000
-      ) +
-        1) /
-        2
-    ).multiply(new Vector(canvas.width, canvas.height));
+    for (let i = 0; i < config.numRays; i++) {
+      const angle = (i / config.numRays + config.rayAngleOffset) * Math.PI * 2;
+      const dir = new Vector(Math.sin(angle), Math.cos(angle));
+      const position = config.useMouse
+        ? mouse
+        : getNoiseCoordinates(currTime / timeToRepeat);
 
-    const ray = new Ray(position, dir);
-    ray.cast(scene);
-    ray.draw(ctx);
+      const ray = new Ray(
+        position,
+        dir,
+        config.maxReflections,
+        config.forceInfluence
+      );
+      ray.cast(scene);
+      ray.draw(ctx);
+    }
+
+    mouseMoved = false;
   }
 
-  //   mouseMoved = false;
-  // }
   const now = new Date().getTime();
   currTime = (currTime + now - prevTime) % timeToRepeat;
   prevTime = now;

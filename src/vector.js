@@ -89,6 +89,10 @@ class Vector {
   copy() {
     return new Vector(this);
   }
+
+  equals(other) {
+    return this.x === other.x && this.y === other.y;
+  }
 }
 
 Vector.ZERO = new Vector(0, 0);

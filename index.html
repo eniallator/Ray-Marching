@@ -6,12 +6,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Ray Marching</title>
+  <style>
+    .inline-block {
+      display: inline-block;
+    }
+  </style>
 </head>
 
 <body style="margin: 0px;">
   <canvas id="canvas"></canvas>
+  <section id="parameter-config">
+    <div class="inline-block">
+      <label for="use-mouse">Use mouse</label>
+      <input id="use-mouse" type="checkbox" />
+    </div>
+    <div class="inline-block">
+      <label for="num-rays">Number of rays</label>
+      <input id="num-rays" type="number" min="1" max="2000" value="720" />
+    </div>
+    <div class="inline-block">
+      <label for="ray-angle-offset">Ray angle offset</label>
+      <input id="ray-angle-offset" type="range" min="0" max="1" value="0" step="0.01" />
+    </div>
+    <div class="inline-block">
+      <label for="max-reflections">Max reflections</label>
+      <input id="max-reflections" type="range" min="0" max="10" value="0" />
+    </div>
+    <div class="inline-block">
+      <label for="force-influence">Object gravity influence</label>
+      <input id="force-influence" type="range" min="0" max="0.2" value="0" step="0.01" />
+    </div>
+  </section>
 
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+  <script src="https://raw.githubusercontent.com/gpujs/gpu.js/master/dist/gpu-browser.min.js"></script>
 
   <script src="src/vector.js"></script>
   <script src="src/bounding_box.js"></script>
