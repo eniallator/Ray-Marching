@@ -1,21 +1,11 @@
 class Circle extends BaseObject {
   constructor(material, x, y, diameter) {
-    super(material);
+    const pos = new Vector(x, y);
 
-    this.pos = new Vector(x, y);
+    super(material, pos.copy(), Math.PI * (diameter / 2) ** 2);
+
+    this.pos = pos;
     this.diameter = diameter;
-  }
-
-  getForceAt(vec, gravityFallOff) {
-    const diff = this.pos.copy().sub(vec);
-    const mag = diff.getMagnitude();
-    if (mag < this.diameter / 2 || mag > gravityFallOff + this.diameter / 2) {
-      return Vector.ZERO.copy();
-    }
-    diff.setMagnitude(
-      1 - (diff.getMagnitude() - this.diameter / 2) / gravityFallOff
-    );
-    return diff;
   }
 
   distanceEstimator(vec) {
