@@ -1,3 +1,5 @@
-# Web-Animation-Template
+# Ray Marching
 
-My template repository for creating web animations
+A ray marching simulation created using the HTML canvas and Javascript
+
+![Example screenshot](./example.png)
