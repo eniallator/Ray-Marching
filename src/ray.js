@@ -5,10 +5,10 @@ class Ray {
     this.dirNorm = dirNorm;
     this.maxReflections = maxReflections || 0;
     this.forceInfluence = forceInfluence || 0;
-
-    this.collisionTolerance = 1;
     this.maxStep = maxStep;
 
+    this.collisionTolerance = 1;
+    this.forceInfluenceConstant = 1 / 30;
     this.collisionPoints = [];
     this.path = [];
   }
@@ -47,7 +47,11 @@ class Ray {
         const offset = this.dirNorm.copy().multiply(step);
         this.pos.add(offset);
         this.dirNorm = this.dirNorm
-          .add(sceneObj.getForceAt(this.pos).multiply(this.forceInfluence))
+          .add(
+            sceneObj
+              .getForceAt(this.pos)
+              .multiply(this.forceInfluence, step, this.forceInfluenceConstant)
+          )
           .getNorm();
       }
     }
