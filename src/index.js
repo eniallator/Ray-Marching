@@ -52,14 +52,14 @@ let currTime = 0;
 const getNoiseCoordinates = (percentRound) =>
   new Vector(
     (simplex.noise2D(
-      noiseScale * Math.sin(percentRound * Math.PI * 2),
-      noiseScale * Math.cos(percentRound * Math.PI * 2)
+      noiseScale * Math.cos(percentRound * Math.PI * 2),
+      noiseScale * Math.sin(percentRound * Math.PI * 2)
     ) +
       1) /
       2,
     (simplex.noise2D(
-      noiseScale * Math.sin(percentRound * Math.PI * 2) + 10000,
-      noiseScale * Math.cos(percentRound * Math.PI * 2) + 10000
+      noiseScale * Math.cos(percentRound * Math.PI * 2) + 10000,
+      noiseScale * Math.sin(percentRound * Math.PI * 2) + 10000
     ) +
       1) /
       2
