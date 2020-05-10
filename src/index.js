@@ -65,6 +65,30 @@ const getNoiseCoordinates = (percentRound) =>
       2
   ).multiply(new Vector(canvas.width, canvas.height));
 
+const padding = 15000;
+const fieldBounds = new InsideRectangle(
+  new Clear(),
+  -padding,
+  -padding,
+  padding * 2 + canvas.width,
+  padding * 2 + canvas.height
+);
+
+const size = 100;
+const magnet = new BarMagnet(
+  // paramConfig.getVal("force-influence"),
+  9.58,
+  //paramConfig.getVal("num-rays"),
+  100,
+  fieldBounds,
+  // paramConfig.getVal("max-step"),
+  10,
+  canvas.width / 2 - size / 2,
+  canvas.height / 2 - size / 2,
+  size,
+  size
+);
+
 function run() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -99,6 +123,16 @@ function run() {
   prevTime = now;
 
   requestAnimationFrame(run);
+}
+
+function run() {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+
+  magnet.draw(ctx);
+
+  // requestAnimationFrame(run);
 }
 
 run();
