@@ -88,7 +88,8 @@ function run() {
       dir,
       paramConfig.getVal("max-reflections"),
       paramConfig.getVal("force-influence"),
-      paramConfig.getVal("max-step")
+      paramConfig.getVal("max-step"),
+      paramConfig.getVal("curve-influence")
     );
     ray.cast(scene);
     ray.draw(ctx);

@@ -57,4 +57,15 @@ const parameterConfig = [
       step: 0.01,
     },
   },
+  {
+    id: "curve-influence",
+    label: "Curve influence",
+    default: 0,
+    type: "range",
+    attrs: {
+      min: 0,
+      max: 1,
+      step: 0.01,
+    },
+  },
 ];

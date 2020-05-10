@@ -1,25 +1,33 @@
 class Ray {
-  constructor(pos, dirNorm, maxReflections, forceInfluence, maxStep) {
+  constructor(
+    pos,
+    dirNorm,
+    maxReflections,
+    forceInfluence,
+    maxStep,
+    curveInfluence
+  ) {
     this.initialPos = pos.copy();
     this.pos = pos.copy();
     this.dirNorm = dirNorm;
-    this.maxReflections = maxReflections || 0;
-    this.forceInfluence = forceInfluence || 0;
+    this.maxReflections = maxReflections;
+    this.forceInfluence = forceInfluence;
     this.maxStep = maxStep;
+    this.curveInfluence = curveInfluence;
 
     this.collisionTolerance = 1;
     this.collisionPoints = [];
     this.path = [];
   }
 
-  cast(sceneObj) {
+  cast(scene) {
     let step = this.collisionTolerance;
     let reflections = 0;
     while (
       reflections <= this.maxReflections &&
-      (this.inBounds = sceneObj.checkInBounds(this.pos))
+      (this.inBounds = scene.checkInBounds(this.pos))
     ) {
-      const distToClosestObj = sceneObj.distanceEstimator(this.pos);
+      const distToClosestObj = scene.distanceEstimator(this.pos);
       step =
         this.maxStep > 0 && distToClosestObj > this.maxStep
           ? this.maxStep
@@ -29,7 +37,7 @@ class Ray {
 
       if (step < this.collisionTolerance) {
         if (++reflections <= this.maxReflections) {
-          const surfaceNormal = sceneObj.getClosestSurfaceNormal(this.pos);
+          const surfaceNormal = scene.getClosestSurfaceNormal(this.pos);
           this.dirNorm = this.dirNorm.sub(
             surfaceNormal.copy().multiply(2 * this.dirNorm.dot(surfaceNormal))
           );
@@ -37,8 +45,8 @@ class Ray {
 
         this.collisionPoints.push({
           pos: this.pos.copy(),
-          colour: sceneObj.getColour(this.pos),
-          inBounds: sceneObj.checkInBounds(this.pos),
+          colour: scene.getColour(this.pos),
+          inBounds: scene.checkInBounds(this.pos),
         });
 
         this.pos.add(this.dirNorm.copy().multiply(this.collisionTolerance));
@@ -46,9 +54,7 @@ class Ray {
         const offset = this.dirNorm.copy().multiply(step);
         this.pos.add(offset);
         this.dirNorm = this.dirNorm
-          .add(
-            sceneObj.getForceAt(this.pos).multiply(this.forceInfluence, step)
-          )
+          .add(scene.getForceAt(this.pos).multiply(this.forceInfluence, step))
           .getNorm();
       }
     }
@@ -63,8 +69,23 @@ class Ray {
 
     ctx.beginPath();
     ctx.moveTo(this.initialPos.x, this.initialPos.y);
-    for (let item of this.path) {
-      ctx.lineTo(item.pos.x, item.pos.y);
+
+    let prevPos;
+    for (let i = 0; i < this.path.length; i++) {
+      const item = this.path[i];
+      if (i == 0 || !this.curveInfluence || this.curveInfluence < 0) {
+        ctx.lineTo(item.pos.x, item.pos.y);
+      } else {
+        const offset = prevPos
+          .copy()
+          .sub(item.pos)
+          .multiply(this.curveInfluence);
+        offset.setAngle(offset.getAngle() + (((i % 2) * 2 - 1) * Math.PI) / 2);
+        const pt1 = prevPos.copy().add(offset);
+        const pt2 = item.pos.copy().add(offset);
+        ctx.bezierCurveTo(pt1.x, pt1.y, pt2.x, pt2.y, item.pos.x, item.pos.y);
+      }
+      prevPos = item.pos;
     }
     ctx.lineTo(this.pos.x, this.pos.y);
     ctx.stroke();

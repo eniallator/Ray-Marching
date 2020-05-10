@@ -86,12 +86,35 @@ class Vector {
     return new Vector(x, y);
   }
 
+  getAngle() {
+    const quadrants = {
+      "x:1,y:1": () => (!this.y ? 0 : Math.atan(this.y / this.x)),
+      "x:-1,y:1": () =>
+        !this.x ? Math.PI / 2 : Math.PI - Math.atan(this.y / -this.x),
+      "x:-1,y:-1": () =>
+        !this.y ? Math.PI : (Math.PI * 3) / 2 - Math.atan(this.x / this.y),
+      "x:1,y:-1": () =>
+        !this.y ? 0 : (Math.PI * 3) / 2 + Math.atan(this.x / -this.y),
+    };
+    return quadrants[this.getSign().toString()]();
+  }
+
+  setAngle(angle) {
+    const magnitude = this.getMagnitude();
+    this.x = magnitude * Math.cos(angle);
+    this.y = magnitude * Math.sin(angle);
+  }
+
   copy() {
     return new Vector(this);
   }
 
   equals(other) {
     return this.x === other.x && this.y === other.y;
+  }
+
+  toString() {
+    return `x:${this.x},y:${this.y}`;
   }
 }
 
