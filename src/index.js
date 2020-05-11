@@ -70,6 +70,7 @@ function run() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "white";
 
+  scene.setNumObjects(paramConfig.getVal("num-objects"));
   scene.draw(ctx);
 
   for (let i = 0; i < paramConfig.getVal("num-rays"); i++) {

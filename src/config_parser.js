@@ -51,7 +51,11 @@ class ParamConfig {
 
       const typeCfg = paramTypes[cfgData.type];
       const stateKey = cfgData.id;
-      this.state[stateKey] = { tag: inpTag, serialise: typeCfg.serialise };
+      this.state[stateKey] = {
+        tag: inpTag,
+        serialise: typeCfg.serialise,
+        default: cfgData.default,
+      };
       inpTag.change(typeCfg.change(stateKey, this.state));
 
       typeCfg.setVal(
@@ -81,6 +85,10 @@ class ParamConfig {
   serialiseToURLParams() {
     let params = "";
     for (let key in this.state) {
+      if (this.state[key].default === this.state[key].val) {
+        continue;
+      }
+
       if (params !== "") {
         params += "&";
       }

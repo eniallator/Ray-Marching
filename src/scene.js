@@ -3,21 +3,34 @@ class Scene {
     this.gravityFallOff = Math.sqrt(width * width + height * height);
 
     this.rect = new InsideRectangle(new Clear(), x, y, width, height);
-    const center = new Vector(x + width / 2, y + height / 2);
-    let objX, objY;
-    const objSize = Math.min(width, height) / 8;
-    this.objectList = new Array(10)
-      .fill()
-      .map(
-        (_) => (
-          (objX = x + Math.random() * width),
-          (objY = y + Math.random() * height),
-          Math.random() < 0.5
-            ? new Circle(new Rainbow(), objX, objY, objSize)
-            : new Rectangle(new Rainbow(), objX, objY, objSize, objSize)
-        )
-      );
-    this.objectList.push(this.rect);
+    this.objectList = [this.rect];
+    this.setNumObjects(10);
+  }
+
+  addRandomObject() {
+    const objSize = Math.min(this.rect.box.width, this.rect.box.height) / 8;
+    const objX = this.rect.box.x + Math.random() * this.rect.box.width;
+    const objY = this.rect.box.y + Math.random() * this.rect.box.height;
+    this.objectList.push(
+      Math.random() < 0.5
+        ? new Circle(new Rainbow(), objX, objY, objSize)
+        : new Rectangle(new Rainbow(), objX, objY, objSize, objSize)
+    );
+  }
+
+  setNumObjects(num) {
+    if (num < 0 || num === this.objectList.length - 1) {
+      return;
+    }
+
+    const numWithRect = num + 1;
+    if (numWithRect < this.objectList.length) {
+      this.objectList = this.objectList.slice(0, numWithRect);
+    } else {
+      for (let i = this.objectList.length - 1; i < numWithRect; i++) {
+        this.addRandomObject();
+      }
+    }
   }
 
   checkInBounds(vec) {

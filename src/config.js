@@ -6,6 +6,16 @@ const parameterConfig = [
     type: "checkbox",
   },
   {
+    id: "num-objects",
+    label: "Number of objects",
+    default: 10,
+    type: "number",
+    attrs: {
+      min: 0,
+      max: 50,
+    },
+  },
+  {
     id: "num-rays",
     label: "Number of rays",
     default: 720,
