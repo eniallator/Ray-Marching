@@ -102,7 +102,11 @@ function run() {
     : getNoiseCoordinates(currTime / timeToRepeat);
 
   if (paramConfig.getVal("mesh")) {
-    const mesh = new Mesh(position, paramConfig.getVal("num-rays"));
+    const mesh = new Mesh(
+      position,
+      paramConfig.getVal("num-rays"),
+      paramConfig.getVal("force-influence")
+    );
     mesh.cast(scene);
     mesh.draw(ctx, paramConfig.getVal("light-radius") * canvasDiagonal);
   } else {

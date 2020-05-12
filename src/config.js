@@ -32,17 +32,6 @@ const parameterConfig = [
     },
   },
   {
-    id: "light-radius",
-    label: "Light radius",
-    default: 1,
-    type: "range",
-    attrs: {
-      min: 0,
-      max: 1,
-      step: 0.01,
-    },
-  },
-  {
     id: "max-reflections",
     label: "Max reflections",
     default: 0,
@@ -66,6 +55,17 @@ const parameterConfig = [
     id: "ray-angle-offset",
     label: "Ray angle offset",
     default: 0,
+    type: "range",
+    attrs: {
+      min: 0,
+      max: 1,
+      step: 0.01,
+    },
+  },
+  {
+    id: "light-radius",
+    label: "Light radius",
+    default: 1,
     type: "range",
     attrs: {
       min: 0,
