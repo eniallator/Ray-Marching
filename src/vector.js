@@ -59,6 +59,8 @@ class Vector {
       this.x = xOrVec;
       this.y = y;
     }
+
+    return this;
   }
 
   getSquaredMagnitude() {
@@ -73,6 +75,8 @@ class Vector {
     const magRatio = mag / this.getMagnitude();
     this.x *= magRatio;
     this.y *= magRatio;
+
+    return this;
   }
 
   getNorm() {
@@ -103,6 +107,8 @@ class Vector {
     const magnitude = this.getMagnitude();
     this.x = magnitude * Math.cos(angle);
     this.y = magnitude * Math.sin(angle);
+
+    return this;
   }
 
   copy() {

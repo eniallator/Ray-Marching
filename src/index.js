@@ -18,6 +18,8 @@ const noScrollbarOffset = 5;
 canvas.width -= noScrollbarOffset;
 canvas.height -= noScrollbarOffset;
 
+const canvasDiagonal = Math.sqrt(canvas.width ** 2 + canvas.height ** 2);
+
 ctx.strokeStyle = "white";
 
 const mouse = Vector.ONE.copy();
@@ -65,14 +67,7 @@ const getNoiseCoordinates = (percentRound) =>
       2
   ).multiply(new Vector(canvas.width, canvas.height));
 
-function run() {
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "white";
-
-  scene.setNumObjects(paramConfig.getVal("num-objects"));
-  scene.draw(ctx);
-
+function light(position) {
   for (let i = 0; i < paramConfig.getVal("num-rays"); i++) {
     const angle =
       (i / paramConfig.getVal("num-rays") +
@@ -80,9 +75,6 @@ function run() {
       Math.PI *
       2;
     const dir = new Vector(Math.sin(angle), Math.cos(angle));
-    const position = paramConfig.getVal("use-mouse")
-      ? mouse
-      : getNoiseCoordinates(currTime / timeToRepeat);
 
     const ray = new Ray(
       position,
@@ -93,7 +85,28 @@ function run() {
       paramConfig.getVal("curve-influence")
     );
     ray.cast(scene);
-    ray.draw(ctx);
+    ray.draw(ctx, paramConfig.getVal("light-radius"));
+  }
+}
+
+function run() {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+
+  scene.setNumObjects(paramConfig.getVal("num-objects"));
+  scene.draw(ctx);
+
+  const position = paramConfig.getVal("use-mouse")
+    ? mouse
+    : getNoiseCoordinates(currTime / timeToRepeat);
+
+  if (paramConfig.getVal("mesh")) {
+    const mesh = new Mesh(position, paramConfig.getVal("num-rays"));
+    mesh.cast(scene);
+    mesh.draw(ctx, paramConfig.getVal("light-radius") * canvasDiagonal);
+  } else {
+    light(position);
   }
 
   const now = new Date().getTime();

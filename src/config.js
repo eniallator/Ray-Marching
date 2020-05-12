@@ -1,5 +1,11 @@
 const parameterConfig = [
   {
+    id: "mesh",
+    label: "Mesh",
+    default: false,
+    type: "checkbox",
+  },
+  {
     id: "use-mouse",
     label: "Use mouse",
     default: false,
@@ -23,6 +29,17 @@ const parameterConfig = [
     attrs: {
       min: 1,
       max: 2000,
+    },
+  },
+  {
+    id: "light-radius",
+    label: "Light radius",
+    default: 1,
+    type: "range",
+    attrs: {
+      min: 0,
+      max: 1,
+      step: 0.01,
     },
   },
   {
