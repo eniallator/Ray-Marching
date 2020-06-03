@@ -16,13 +16,20 @@ class Ray {
     this.curveInfluence = curveInfluence;
 
     this.collisionTolerance = 1;
-    this.collisionPoints = [];
-    this.path = [];
+  }
+
+  setPos(pos) {
+    this.initialPos = pos.copy();
+    this.pos = pos.copy();
   }
 
   cast(scene) {
+    this.path = [];
+    this.collisionPoints = [];
+
     let step = this.collisionTolerance;
     let reflections = 0;
+
     while (
       reflections <= this.maxReflections &&
       (this.inBounds = scene.checkInBounds(this.pos))

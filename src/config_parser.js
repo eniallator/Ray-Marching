@@ -24,6 +24,7 @@ const paramTypes = {
 class ParamConfig {
   constructor(parameterConfig, rawUrlParams, baseEl) {
     this.state = {};
+    this.listeners = [];
     const initialValues = this.parseUrlParams(rawUrlParams);
 
     for (let cfgData of parameterConfig) {
@@ -37,8 +38,8 @@ class ParamConfig {
         }
       }
       baseEl.append(
-        $(document.createElement("label"))
-          .css("display", "inline-block")
+        $(document.createElement("div"))
+          .addClass("config-item")
           .append(
             cfgData.label
               ? $(document.createElement("label"))
@@ -56,7 +57,11 @@ class ParamConfig {
         serialise: typeCfg.serialise,
         default: cfgData.default,
       };
-      inpTag.change(typeCfg.change(stateKey, this.state));
+      const inpTagChange = typeCfg.change(stateKey, this.state);
+      inpTag.change((evt) => {
+        inpTagChange(evt);
+        this.tellListeners();
+      });
 
       typeCfg.setVal(
         inpTag,
@@ -65,6 +70,21 @@ class ParamConfig {
           : cfgData.default
       );
       inpTag.trigger("change");
+    }
+  }
+
+  addListener(listener) {
+    this.listeners.push(listener);
+    this.tellListeners();
+  }
+
+  tellListeners() {
+    for (let listener of this.listeners) {
+      const stateCopy = {};
+      for (let key in this.state) {
+        stateCopy[key] = this.state[key].val;
+      }
+      listener(stateCopy);
     }
   }
 

@@ -6,19 +6,24 @@ const paramConfig = new ParamConfig(
 
 const simplex = new SimplexNoise(new Date().getTime());
 
-const canvas = document.getElementById("canvas");
+const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
+let firstRun = true;
+let canvasDiagonal = Math.sqrt(canvas.width ** 2 + canvas.height ** 2);
+window.onresize = (evt) => {
+  canvas.width = $("#canvas").width();
+  canvas.height = $("#canvas").height();
+  canvasDiagonal = Math.sqrt(canvas.width ** 2 + canvas.height ** 2);
 
-const aspectRatio = 16 / 9;
+  if (firstRun) {
+    firstRun = false;
+  } else {
+    scene = new Scene(0, 0, canvas.width, canvas.height);
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - $("#parameter-config").height();
-
-const noScrollbarOffset = 5;
-canvas.width -= noScrollbarOffset;
-canvas.height -= noScrollbarOffset;
-
-const canvasDiagonal = Math.sqrt(canvas.width ** 2 + canvas.height ** 2);
+    paramConfig.tellListeners();
+  }
+};
+window.onresize();
 
 ctx.strokeStyle = "white";
 
@@ -31,7 +36,7 @@ canvas.ontouchmove = (ev) => {
   mouse.setHead(ev.touches[0].clientX, ev.touches[0].clientY);
 };
 
-const scene = new Scene(0, 0, canvas.width, canvas.height);
+let scene = new Scene(0, 0, canvas.width, canvas.height);
 
 new ClipboardJS("#share-btn", {
   text: (trigger) => {
