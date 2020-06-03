@@ -9,6 +9,7 @@ class Ray {
   ) {
     this.initialPos = pos.copy();
     this.pos = pos.copy();
+    this.initialDir = dirNorm.copy();
     this.dirNorm = dirNorm;
     this.maxReflections = maxReflections;
     this.forceInfluence = forceInfluence;
@@ -18,15 +19,19 @@ class Ray {
     this.collisionTolerance = 1;
   }
 
+  reset() {
+    this.path = [];
+    this.collisionPoints = [];
+    this.dirNorm = this.initialDir.copy();
+    this.pos = this.initialPos.copy();
+  }
+
   setPos(pos) {
     this.initialPos = pos.copy();
-    this.pos = pos.copy();
   }
 
   cast(scene) {
-    this.path = [];
-    this.collisionPoints = [];
-
+    this.reset();
     let step = this.collisionTolerance;
     let reflections = 0;
 
