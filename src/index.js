@@ -115,28 +115,21 @@ paramConfig.addListener((state, updates) => {
 });
 
 function run() {
+  ctx.globalCompositeOperation = "darken";
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "white";
+  ctx.globalCompositeOperation = "lighten";
 
   scene.setNumObjects(paramConfig.getVal("num-objects"));
   scene.draw(ctx);
 
+  lights.forEach((light) => light.setUseMesh(paramConfig.getVal("mesh")));
+
   if (paramConfig.getVal("use-mouse")) {
-    if (paramConfig.getVal("mesh")) {
-      const mesh = new Mesh(
-        mouse,
-        paramConfig.getVal("num-rays"),
-        paramConfig.getVal("force-influence")
-      );
-      mesh.cast(scene);
-      mesh.draw(ctx, paramConfig.getVal("light-radius") * canvasDiagonal);
-    } else {
-      lights[0].setPos(mouse);
-      lights[0].shine(scene, ctx);
-    }
+    lights[0].setPos(mouse);
+    lights[0].shine(scene, ctx, paramConfig.getVal("mesh") * canvasDiagonal);
   } else {
-    // TODO: Make the mesh part of the light class and put it in the shine method
     const percentRound = currTime / timeToRepeat;
     const position = paramConfig.getVal("use-mouse")
       ? mouse
@@ -147,7 +140,11 @@ function run() {
     );
 
     for (let light of lights) {
-      light.shine(scene, ctx);
+      light.shine(
+        scene,
+        ctx,
+        paramConfig.getVal("light-radius") * canvasDiagonal
+      );
     }
   }
 

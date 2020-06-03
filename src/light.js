@@ -30,12 +30,76 @@ class Light {
       );
 
     this.recastRays = true;
+    this.diffTolerance = 50;
   }
 
   setPos(pos) {
     this.pos = pos.copy();
     this.recastRays = true;
     this.posUpdated = true;
+  }
+
+  setUseMesh(value) {
+    this.recastRays = this.recastRays || this.useMesh !== value;
+    this.useMesh = value;
+  }
+
+  createMesh() {
+    this.meshPoints = [];
+    this.rays.forEach((ray) => ray.cast(scene));
+
+    for (let i = 0; i < this.rays.length; i++) {
+      const ray = this.rays[i];
+      const rayLength = ray.path.reduce((acc, item) => acc + item.step, 0);
+      const nextRay = this.rays[(i + 1) % this.rays.length];
+      const nextRayLength = nextRay.path.reduce(
+        (acc, item) => acc + item.step,
+        0
+      );
+      const diff = rayLength - nextRayLength;
+      const bigger = diff > 0 ? ray : nextRay;
+
+      this.meshPoints.push(ray.collisionPoints[0].pos);
+
+      let currStep = 0;
+      for (let j = bigger.path.length - 1; j >= 0; j--) {
+        const curr = bigger.path[j];
+        currStep += curr.step;
+        if (currStep < this.diffTolerance) {
+          continue;
+        }
+        if (
+          Math.max(rayLength, nextRayLength) -
+            currStep -
+            Math.min(rayLength, nextRayLength) <
+          this.diffTolerance
+        ) {
+          break;
+        }
+        this.meshPoints.push(curr.pos);
+      }
+    }
+  }
+
+  drawMesh(ctx, lightRadius) {
+    const gradient = ctx.createRadialGradient(
+      this.pos.x,
+      this.pos.y,
+      0,
+      this.pos.x,
+      this.pos.y,
+      lightRadius
+    );
+
+    gradient.addColorStop(0, "#707070");
+    gradient.addColorStop(1, "black");
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+    this.meshPoints.forEach((point, i) =>
+      i === 0 ? ctx.moveTo(point.x, point.y) : ctx.lineTo(point.x, point.y)
+    );
+    ctx.fill();
   }
 
   cast(scene) {
@@ -45,21 +109,31 @@ class Light {
       }
       ray.cast(scene);
     }
+    if (this.useMesh) {
+      this.createMesh();
+    }
     this.posUpdated = false;
   }
 
   draw(ctx) {
-    for (let ray of this.rays) {
-      ray.draw(ctx);
+    if (this.useMesh) {
+    } else {
+      for (let ray of this.rays) {
+        ray.draw(ctx);
+      }
     }
   }
 
-  shine(scene, ctx, forceRecast) {
+  shine(scene, ctx, lightRadius, forceRecast) {
     if (this.recastRays || forceRecast) {
       this.cast(scene);
       this.recastRays = false;
     }
 
-    this.draw(ctx);
+    if (this.useMesh) {
+      this.drawMesh(ctx, lightRadius);
+    } else {
+      this.draw(ctx);
+    }
   }
 }
