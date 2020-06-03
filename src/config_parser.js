@@ -25,6 +25,7 @@ class ParamConfig {
   constructor(parameterConfig, rawUrlParams, baseEl) {
     this.state = {};
     this.listeners = [];
+    this.updates = [];
     const initialValues = this.parseUrlParams(rawUrlParams);
 
     for (let cfgData of parameterConfig) {
@@ -59,6 +60,7 @@ class ParamConfig {
       };
       const inpTagChange = typeCfg.change(stateKey, this.state);
       inpTag.change((evt) => {
+        this.updates.push(cfgData.id);
         inpTagChange(evt);
         this.tellListeners();
       });
@@ -84,8 +86,9 @@ class ParamConfig {
       for (let key in this.state) {
         stateCopy[key] = this.state[key].val;
       }
-      listener(stateCopy);
+      listener(stateCopy, this.updates);
     }
+    this.updates = [];
   }
 
   parseUrlParams(rawUrlParams) {

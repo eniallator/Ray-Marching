@@ -12,6 +12,12 @@ const parameterConfig = [
     type: "checkbox",
   },
   {
+    id: "show-mandelbrot",
+    label: "Show mandelbrot",
+    default: false,
+    type: "checkbox",
+  },
+  {
     id: "num-objects",
     label: "Number of objects",
     default: 10,
@@ -19,6 +25,16 @@ const parameterConfig = [
     attrs: {
       min: 0,
       max: 50,
+    },
+  },
+  {
+    id: "num-lights",
+    label: "Number of lights",
+    default: 1,
+    type: "number",
+    attrs: {
+      min: 0,
+      max: 10,
     },
   },
   {

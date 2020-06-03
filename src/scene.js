@@ -1,10 +1,23 @@
 class Scene {
-  constructor(x, y, width, height) {
+  constructor(x, y, width, height, showMandelbrot) {
+    this.showMandelbrot = showMandelbrot;
     this.gravityFallOff = Math.sqrt(width * width + height * height);
 
     this.rect = new InsideRectangle(new Clear(), x, y, width, height);
     this.objectList = [this.rect];
-    this.setNumObjects(10);
+
+    if (showMandelbrot) {
+      this.objectList.push(
+        new Mandelbrot(
+          new Rainbow(),
+          x + width / 2,
+          y + height / 2,
+          Math.min(width, height) / 5
+        )
+      );
+    } else {
+      this.setNumObjects(10);
+    }
   }
 
   addRandomObject() {
@@ -19,7 +32,7 @@ class Scene {
   }
 
   setNumObjects(num) {
-    if (num < 0 || num === this.objectList.length - 1) {
+    if (this.showMandelbrot || num < 0 || num === this.objectList.length - 1) {
       return;
     }
 
