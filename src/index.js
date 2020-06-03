@@ -119,7 +119,9 @@ function run() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "white";
-  ctx.globalCompositeOperation = "lighten";
+  ctx.globalCompositeOperation = paramConfig.getVal("mesh")
+    ? "lighten"
+    : "source-over";
 
   scene.setNumObjects(paramConfig.getVal("num-objects"));
   scene.draw(ctx);
