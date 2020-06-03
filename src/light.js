@@ -34,9 +34,9 @@ class Light {
   }
 
   setPos(pos) {
+    this.recastRays = this.recastRays || !this.pos.equals(pos);
+    this.posUpdated = this.posUpdated || !this.pos.equals(pos);
     this.pos = pos.copy();
-    this.recastRays = true;
-    this.posUpdated = true;
   }
 
   setUseMesh(value) {
@@ -115,8 +115,9 @@ class Light {
     this.posUpdated = false;
   }
 
-  draw(ctx) {
+  draw(ctx, lightRadius) {
     if (this.useMesh) {
+      this.drawMesh(ctx, lightRadius);
     } else {
       for (let ray of this.rays) {
         ray.draw(ctx);
@@ -129,11 +130,6 @@ class Light {
       this.cast(scene);
       this.recastRays = false;
     }
-
-    if (this.useMesh) {
-      this.drawMesh(ctx, lightRadius);
-    } else {
-      this.draw(ctx);
-    }
+    this.draw(ctx, lightRadius);
   }
 }

@@ -141,17 +141,14 @@ function run() {
       ? mouse
       : getNoiseCoordinates(percentRound);
 
-    lights.forEach((light, i) =>
-      light.setPos(getNoiseCoordinates(percentRound, i + 1))
-    );
-
-    for (let light of lights) {
+    lights.forEach((light, i) => {
+      light.setPos(getNoiseCoordinates(percentRound, i + 1));
       light.shine(
         scene,
         ctx,
         paramConfig.getVal("light-radius") * canvasDiagonal
       );
-    }
+    });
   }
 
   const now = new Date().getTime();
