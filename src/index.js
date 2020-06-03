@@ -130,7 +130,11 @@ function run() {
 
   if (paramConfig.getVal("use-mouse")) {
     lights[0].setPos(mouse);
-    lights[0].shine(scene, ctx, paramConfig.getVal("mesh") * canvasDiagonal);
+    lights[0].shine(
+      scene,
+      ctx,
+      paramConfig.getVal("light-radius") * canvasDiagonal
+    );
   } else {
     const percentRound = currTime / timeToRepeat;
     const position = paramConfig.getVal("use-mouse")
