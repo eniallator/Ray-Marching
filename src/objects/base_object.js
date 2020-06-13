@@ -6,11 +6,12 @@ class BaseObject {
   }
 
   getForceAt(vec, gravityFallOff) {
-    const diff = this.centerOfMass.copy().sub(vec);
-    const mag = diff.getMagnitude();
-    if (this.mass <= 0) {
+    if (this.mass === 0) {
       return Vector.ZERO.copy();
     }
+    timeAnalysis.startTime(BaseObject, "getForceAt");
+    const diff = this.centerOfMass.copy().sub(vec);
+    const mag = diff.getMagnitude();
     diff.setMagnitude(this.mass / mag / gravityFallOff);
     return diff;
   }
