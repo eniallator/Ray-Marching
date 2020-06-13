@@ -3,26 +3,24 @@ class TimeAnalysis {
     this.times = new Map();
   }
 
-  safeAddTime(cls, action, obj) {
+  safeAddTime(cls, action) {
     if (!this.times.has(cls)) {
       this.times.set(cls, {});
     }
     if (!this.times.get(cls).hasOwnProperty(action)) {
-      this.times.get(cls)[action] = new Map();
-    }
-    if (!this.times.get(cls)[action].has(obj)) {
-      this.times.get(cls)[action].set(obj, {});
+      this.times.get(cls)[action] = { total: 0, calls: 0 };
     }
   }
 
-  startTime(cls, action, obj) {
-    this.safeAddTime(cls, action, obj);
-    this.times.get(cls)[action].get(obj).start = Date.now();
+  startTime(cls, action) {
+    this.safeAddTime(cls, action);
+    this.times.get(cls)[action].start = Date.now();
   }
 
-  endTime(cls, action, obj) {
-    this.safeAddTime(cls, action, obj);
-    this.times.get(cls)[action].get(obj).end = Date.now();
+  endTime(cls, action) {
+    const currAction = this.times.get(cls)[action];
+    currAction.total += Date.now() - currAction.start;
+    currAction.calls++;
   }
 
   generateAudit() {
@@ -35,19 +33,13 @@ class TimeAnalysis {
       audit += `Times for ${cls.name === undefined ? cls : cls.name}`;
       for (let action of Object.keys(this.times.get(cls))) {
         const currAction = this.times.get(cls)[action];
-        const total = { start: 0, end: 0 };
-        for (let curr of currAction.values()) {
-          total.start += curr.start;
-          total.end += curr.end;
-        }
-        const totalDiff = total.end - total.start;
         audit += `\n- ${action}: `;
-        if (currAction.size > 1) {
-          audit += `total: ${totalDiff}, average: ${
-            totalDiff / currAction.size
-          } over ${currAction.size} calls`;
+        if (currAction.calls > 1) {
+          audit += `total: ${currAction.total}, average: ${
+            currAction.total / currAction.calls
+          } over ${currAction.calls} calls`;
         } else {
-          audit += totalDiff;
+          audit += currAction.total;
         }
       }
     }

@@ -31,7 +31,7 @@ class Ray {
   }
 
   cast(scene) {
-    // timeAnalysis.startTime(Ray, "cast", this);
+    timeAnalysis.startTime(Ray, "cast");
     this.reset();
     let step = this.collisionTolerance;
     let reflections = 0;
@@ -41,8 +41,7 @@ class Ray {
       reflections <= this.maxReflections &&
       (this.inBounds = scene.checkInBounds(this.pos))
     ) {
-      const findStep = {};
-      timeAnalysis.startTime(Ray, "cast[findStep]", findStep);
+      timeAnalysis.startTime(Ray, "cast[findStep]");
       if (this.maxStep <= 0 || leftOverDist < this.maxStep) {
         const distToClosestObj = scene.distanceEstimator(this.pos);
         step =
@@ -56,7 +55,7 @@ class Ray {
       }
 
       this.path.push({ pos: this.pos.copy(), step: step });
-      timeAnalysis.endTime(Ray, "cast[findStep]", findStep);
+      timeAnalysis.endTime(Ray, "cast[findStep]");
 
       if (step < this.collisionTolerance) {
         if (++reflections <= this.maxReflections) {
@@ -74,23 +73,21 @@ class Ray {
 
         this.pos.add(this.dirNorm.copy().multiply(this.collisionTolerance));
       } else {
-        const updatePos = {};
-        timeAnalysis.startTime(Ray, "cast[updatePos]", updatePos);
+        timeAnalysis.startTime(Ray, "cast[updatePos]");
         const offset = this.dirNorm.copy().multiply(step);
         this.pos.add(offset);
-        timeAnalysis.endTime(Ray, "cast[updatePos]", updatePos);
+        timeAnalysis.endTime(Ray, "cast[updatePos]");
 
-        const updateDirNorm = {};
-        timeAnalysis.startTime(Ray, "cast[updateDirNorm]", updateDirNorm);
         if (this.forceInfluence !== 0) {
+          timeAnalysis.startTime(Ray, "cast[updateDirNorm]");
           this.dirNorm = this.dirNorm
             .add(scene.getForceAt(this.pos).multiply(this.forceInfluence, step))
             .getNorm();
-          timeAnalysis.endTime(Ray, "cast[updateDirNorm]", updateDirNorm);
+          timeAnalysis.endTime(Ray, "cast[updateDirNorm]");
         }
       }
     }
-    // timeAnalysis.endTime(Ray, "cast", this);
+    timeAnalysis.endTime(Ray, "cast");
   }
 
   draw(ctx) {

@@ -62,8 +62,7 @@ class Scene {
   }
 
   getForceAt(vec) {
-    const o = {};
-    // timeAnalysis.startTime(Scene, "getForceAt", o);
+    timeAnalysis.startTime(Scene, "getForceAt");
     const force = this.objectList
       .reduce(
         (total, curr) =>
@@ -73,27 +72,25 @@ class Scene {
         Vector.ZERO.copy()
       )
       .divide(this.objectList.length);
-    // timeAnalysis.endTime(Scene, "getForceAt", o);
+    timeAnalysis.endTime(Scene, "getForceAt");
     return force;
   }
 
   getClosestSurfaceNormal(vec) {
-    const o = {};
-    timeAnalysis.startTime(Scene, "getClosestSurfaceNormal", o);
+    timeAnalysis.startTime(Scene, "getClosestSurfaceNormal");
     const closestSurfaceNormal = this._getClosestObj(vec).obj.getSurfaceNormal(
       vec
     );
-    timeAnalysis.endTime(Scene, "getClosestSurfaceNormal", o);
+    timeAnalysis.endTime(Scene, "getClosestSurfaceNormal");
 
     return closestSurfaceNormal;
   }
 
   distanceEstimator(vec) {
-    const o = {};
-    timeAnalysis.startTime(Scene, "distanceEstimator", o);
+    timeAnalysis.startTime(Scene, "distanceEstimator");
     const distances = this.objectList.map((obj) => obj.distanceEstimator(vec));
     const minDistance = Math.max(0, Math.min(...distances));
-    timeAnalysis.endTime(Scene, "distanceEstimator", o);
+    timeAnalysis.endTime(Scene, "distanceEstimator");
     return minDistance;
   }
 

@@ -1,5 +1,5 @@
 const timeAnalysis = new TimeAnalysis();
-timeAnalysis.startTime("index", "setup", "index");
+timeAnalysis.startTime("index", "setup");
 
 const paramConfig = new ParamConfig(
   parameterConfig,
@@ -90,7 +90,7 @@ const getNoiseCoordinates = (percentRound, offset = 1) =>
 
 const lights = [];
 paramConfig.addListener((state, updates) => {
-  timeAnalysis.startTime(ParamConfig, "reload lights", paramConfig);
+  timeAnalysis.startTime(ParamConfig, "reload lights");
   lights.length = 0;
   const center = new Vector(canvas.width / 2, canvas.height / 2);
   const offset = center.copy().multiply(2 / 3);
@@ -116,14 +116,14 @@ paramConfig.addListener((state, updates) => {
       paramConfig.getVal("show-mandelbrot")
     );
   }
-  timeAnalysis.endTime(ParamConfig, "reload lights", paramConfig);
+  timeAnalysis.endTime(ParamConfig, "reload lights");
 });
 
 const runObj = {};
 
 function run() {
-  timeAnalysis.startTime("run", "total", "run");
-  timeAnalysis.startTime("run", "initalise", "run");
+  timeAnalysis.startTime("run", "total");
+  timeAnalysis.startTime("run", "initalise");
   ctx.globalCompositeOperation = "darken";
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -131,14 +131,14 @@ function run() {
   ctx.globalCompositeOperation = paramConfig.getVal("mesh")
     ? "lighten"
     : "source-over";
-  timeAnalysis.endTime("run", "initalise", "run");
+  timeAnalysis.endTime("run", "initalise");
 
-  timeAnalysis.startTime(Scene, "setNumObjects", scene);
+  timeAnalysis.startTime(Scene, "setNumObjects");
   scene.setNumObjects(paramConfig.getVal("num-objects"));
-  timeAnalysis.endTime(Scene, "setNumObjects", scene);
-  timeAnalysis.startTime(Scene, "draw", scene);
+  timeAnalysis.endTime(Scene, "setNumObjects");
+  timeAnalysis.startTime(Scene, "draw");
   scene.draw(ctx);
-  timeAnalysis.endTime(Scene, "draw", scene);
+  timeAnalysis.endTime(Scene, "draw");
 
   lights.forEach((light) => light.setUseMesh(paramConfig.getVal("mesh")));
 
@@ -169,12 +169,12 @@ function run() {
   currTime = (currTime + now - prevTime) % timeToRepeat;
   prevTime = now;
 
-  timeAnalysis.endTime("run", "total", "run");
+  timeAnalysis.endTime("run", "total");
   console.log(timeAnalysis.generateAudit());
 
   // timeAnalysis.clearTimes();
   // requestAnimationFrame(run);
 }
 
-timeAnalysis.endTime("index", "setup", "index");
+timeAnalysis.endTime("index", "setup");
 run();

@@ -132,13 +132,13 @@ class Light {
 
   shine(scene, ctx, lightRadius, forceRecast) {
     if (this.recastRays || forceRecast) {
-      timeAnalysis.startTime(Light, "cast", this);
+      timeAnalysis.startTime(Light, "cast");
       this.cast(scene);
-      timeAnalysis.endTime(Light, "cast", this);
+      timeAnalysis.endTime(Light, "cast");
       this.recastRays = false;
     }
-    timeAnalysis.startTime(Light, "draw", this);
+    timeAnalysis.startTime(Light, "draw");
     this.draw(ctx, lightRadius);
-    timeAnalysis.endTime(Light, "draw", this);
+    timeAnalysis.endTime(Light, "draw");
   }
 }
