@@ -8,7 +8,7 @@ class TimeAnalysis {
       this.times.set(cls, {});
     }
     if (!this.times.get(cls).hasOwnProperty(action)) {
-      this.times.get(cls)[action] = { total: 0, calls: 0 };
+      this.times.get(cls)[action] = { totalTime: 0, calls: 0, manualCalls: 0 };
     }
   }
 
@@ -26,13 +26,16 @@ class TimeAnalysis {
 
   endTime(cls, action) {
     const currAction = this.times.get(cls)[action];
-    currAction.total += Date.now() - currAction.start;
+    currAction.totalTime += Date.now() - currAction.start;
     currAction.calls++;
   }
 
+  addCall(cls, action) {
+    this.safeAddTime(cls, action);
+    this.times.get(cls)[action].manualCalls++;
+  }
+
   generateAudit() {
-    const auditHelp =
-      "Runtime analysis audit (times are measured in milliseconds)\n-------------------------------------\n\n";
     let audit = "";
 
     for (let cls of this.times.keys()) {
@@ -42,17 +45,23 @@ class TimeAnalysis {
       audit += `Times for ${cls.name === undefined ? cls : cls.name}`;
       for (let action of Object.keys(this.times.get(cls))) {
         const currAction = this.times.get(cls)[action];
-        audit += `\n- ${action}: `;
-        if (currAction.calls > 1) {
-          audit += `total: ${currAction.total}, average: ${
-            currAction.total / currAction.calls
-          } over ${currAction.calls} calls`;
-        } else {
-          audit += currAction.total;
+        let currAudit = "";
+        for (let key of Object.keys(currAction)) {
+          if (currAction[key] && key !== "start") {
+            if (currAudit) currAudit += ", ";
+            currAudit += `${key}: ${currAction[key]}`;
+          }
         }
+        if (currAction.calls > 1) {
+          currAudit += `, averageTime: ${
+            currAction.totalTime / currAction.calls
+          }`;
+        }
+
+        audit += `\n- ${action}: ${currAudit}`;
       }
     }
-    return auditHelp + audit;
+    return `Runtime analysis audit (times are measured in milliseconds)\n-------------------------------------\n\n${audit}`;
   }
 
   clearTimes() {
