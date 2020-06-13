@@ -12,6 +12,13 @@ class TimeAnalysis {
     }
   }
 
+  time(cls, action, callback, args = []) {
+    this.startTime(cls, action);
+    const returnVal = callback(...args);
+    this.endTime(cls, action);
+    return returnVal;
+  }
+
   startTime(cls, action) {
     this.safeAddTime(cls, action);
     this.times.get(cls)[action].start = Date.now();
@@ -24,6 +31,8 @@ class TimeAnalysis {
   }
 
   generateAudit() {
+    const auditHelp =
+      "Runtime analysis audit (times are measured in milliseconds)\n-------------------------------------\n\n";
     let audit = "";
 
     for (let cls of this.times.keys()) {
@@ -43,7 +52,7 @@ class TimeAnalysis {
         }
       }
     }
-    return audit;
+    return auditHelp + audit;
   }
 
   clearTimes() {

@@ -82,7 +82,6 @@ class Scene {
       vec
     );
     timeAnalysis.endTime(Scene, "getClosestSurfaceNormal");
-
     return closestSurfaceNormal;
   }
 

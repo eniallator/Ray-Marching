@@ -90,7 +90,7 @@ const getNoiseCoordinates = (percentRound, offset = 1) =>
 
 const lights = [];
 paramConfig.addListener((state, updates) => {
-  timeAnalysis.startTime(ParamConfig, "reload lights");
+  timeAnalysis.startTime(ParamConfig, "initialiseLights");
   lights.length = 0;
   const center = new Vector(canvas.width / 2, canvas.height / 2);
   const offset = center.copy().multiply(2 / 3);
@@ -116,7 +116,7 @@ paramConfig.addListener((state, updates) => {
       paramConfig.getVal("show-mandelbrot")
     );
   }
-  timeAnalysis.endTime(ParamConfig, "reload lights");
+  timeAnalysis.endTime(ParamConfig, "initialiseLights");
 });
 
 const runObj = {};
@@ -131,14 +131,10 @@ function run() {
   ctx.globalCompositeOperation = paramConfig.getVal("mesh")
     ? "lighten"
     : "source-over";
-  timeAnalysis.endTime("run", "initalise");
 
-  timeAnalysis.startTime(Scene, "setNumObjects");
   scene.setNumObjects(paramConfig.getVal("num-objects"));
-  timeAnalysis.endTime(Scene, "setNumObjects");
-  timeAnalysis.startTime(Scene, "draw");
   scene.draw(ctx);
-  timeAnalysis.endTime(Scene, "draw");
+  timeAnalysis.endTime("run", "initalise");
 
   lights.forEach((light) => light.setUseMesh(paramConfig.getVal("mesh")));
 
