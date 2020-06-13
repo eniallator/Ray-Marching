@@ -5,12 +5,12 @@ class Vector {
 
   arithmeticOperation(args, operation) {
     for (let arg of args) {
-      if (isNaN(arg)) {
-        this.x = operation(this.x, arg.x);
-        this.y = operation(this.y, arg.y);
-      } else {
+      if (arg > 0 || arg <= 0) {
         this.x = operation(this.x, arg);
         this.y = operation(this.y, arg);
+      } else {
+        this.x = operation(this.x, arg.x);
+        this.y = operation(this.y, arg.y);
       }
     }
   }
@@ -52,19 +52,19 @@ class Vector {
   }
 
   setHead(xOrVec, y) {
-    if (isNaN(y)) {
-      this.x = xOrVec.x;
-      this.y = xOrVec.y;
-    } else {
+    if (y > 0 || y <= 0) {
       this.x = xOrVec;
       this.y = y;
+    } else {
+      this.x = xOrVec.x;
+      this.y = xOrVec.y;
     }
 
     return this;
   }
 
   getSquaredMagnitude() {
-    return this.x ** 2 + this.y ** 2;
+    return this.x * this.x + this.y * this.y;
   }
 
   getMagnitude() {
