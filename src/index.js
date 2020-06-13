@@ -1,3 +1,6 @@
+const timeAnalysis = new TimeAnalysis();
+timeAnalysis.startTime("index", "setup", "index");
+
 const paramConfig = new ParamConfig(
   parameterConfig,
   window.location.search,
@@ -87,6 +90,7 @@ const getNoiseCoordinates = (percentRound, offset = 1) =>
 
 const lights = [];
 paramConfig.addListener((state, updates) => {
+  timeAnalysis.startTime(ParamConfig, "reload lights", paramConfig);
   lights.length = 0;
   const center = new Vector(canvas.width / 2, canvas.height / 2);
   const offset = center.copy().multiply(2 / 3);
@@ -112,9 +116,14 @@ paramConfig.addListener((state, updates) => {
       paramConfig.getVal("show-mandelbrot")
     );
   }
+  timeAnalysis.endTime(ParamConfig, "reload lights", paramConfig);
 });
 
+const runObj = {};
+
 function run() {
+  timeAnalysis.startTime("run", "total", "run");
+  timeAnalysis.startTime("run", "initalise", "run");
   ctx.globalCompositeOperation = "darken";
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -122,9 +131,14 @@ function run() {
   ctx.globalCompositeOperation = paramConfig.getVal("mesh")
     ? "lighten"
     : "source-over";
+  timeAnalysis.endTime("run", "initalise", "run");
 
+  timeAnalysis.startTime(Scene, "setNumObjects", scene);
   scene.setNumObjects(paramConfig.getVal("num-objects"));
+  timeAnalysis.endTime(Scene, "setNumObjects", scene);
+  timeAnalysis.startTime(Scene, "draw", scene);
   scene.draw(ctx);
+  timeAnalysis.endTime(Scene, "draw", scene);
 
   lights.forEach((light) => light.setUseMesh(paramConfig.getVal("mesh")));
 
@@ -155,7 +169,12 @@ function run() {
   currTime = (currTime + now - prevTime) % timeToRepeat;
   prevTime = now;
 
-  requestAnimationFrame(run);
+  timeAnalysis.endTime("run", "total", "run");
+  console.log(timeAnalysis.generateAudit());
+
+  // timeAnalysis.clearTimes();
+  // requestAnimationFrame(run);
 }
 
+timeAnalysis.endTime("index", "setup", "index");
 run();
