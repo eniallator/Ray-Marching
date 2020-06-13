@@ -64,7 +64,10 @@ class Scene {
   getForceAt(vec) {
     return this.objectList
       .reduce(
-        (total, curr) => total.add(curr.getForceAt(vec, this.gravityFallOff)),
+        (total, curr) =>
+          curr.mass
+            ? total.add(curr.getForceAt(vec, this.gravityFallOff))
+            : total,
         Vector.ZERO.copy()
       )
       .divide(this.objectList.length);
