@@ -4,6 +4,7 @@ class Vector {
   }
 
   pow(...args) {
+    timeAnalysis.startTime(Vector, "pow");
     for (let arg of args) {
       if (arg > 0 || arg <= 0) {
         this.x = this.x ** arg;
@@ -13,10 +14,12 @@ class Vector {
         this.y = this.y ** arg.y;
       }
     }
+    timeAnalysis.endTime(Vector, "pow");
     return this;
   }
 
   add(...args) {
+    timeAnalysis.startTime(Vector, "add");
     for (let arg of args) {
       if (arg > 0 || arg <= 0) {
         this.x = this.x + arg;
@@ -26,10 +29,12 @@ class Vector {
         this.y = this.y + arg.y;
       }
     }
+    timeAnalysis.endTime(Vector, "add");
     return this;
   }
 
   sub(...args) {
+    timeAnalysis.startTime(Vector, "sub");
     for (let arg of args) {
       if (arg > 0 || arg <= 0) {
         this.x = this.x - arg;
@@ -39,10 +44,12 @@ class Vector {
         this.y = this.y - arg.y;
       }
     }
+    timeAnalysis.endTime(Vector, "sub");
     return this;
   }
 
   multiply(...args) {
+    timeAnalysis.startTime(Vector, "multiply");
     for (let arg of args) {
       if (arg > 0 || arg <= 0) {
         this.x = this.x * arg;
@@ -52,10 +59,12 @@ class Vector {
         this.y = this.y * arg.y;
       }
     }
+    timeAnalysis.endTime(Vector, "multiply");
     return this;
   }
 
   divide(...args) {
+    timeAnalysis.startTime(Vector, "divide");
     for (let arg of args) {
       if (arg > 0 || arg <= 0) {
         this.x = this.x / arg;
@@ -65,6 +74,7 @@ class Vector {
         this.y = this.y / arg.y;
       }
     }
+    timeAnalysis.endTime(Vector, "divide");
     return this;
   }
 
