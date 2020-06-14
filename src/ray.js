@@ -16,7 +16,7 @@ class Ray {
     this.maxStep = maxStep;
     this.curveInfluence = curveInfluence;
 
-    this.collisionTolerance = 1;
+    this.collisionTolerance = 0.1;
   }
 
   reset() {
@@ -34,17 +34,23 @@ class Ray {
     this.reset();
     let step = this.collisionTolerance;
     let reflections = 0;
+    let leftOverDist = 0;
 
     while (
       reflections <= this.maxReflections &&
       (this.inBounds = scene.checkInBounds(this.pos))
     ) {
-      const distToClosestObj = scene.distanceEstimator(this.pos);
-      step =
-        this.maxStep > 0 && distToClosestObj > this.maxStep
-          ? this.maxStep
-          : distToClosestObj;
-
+      if (this.maxStep <= 0 || leftOverDist < this.maxStep) {
+        const distToClosestObj = scene.distanceEstimator(this.pos);
+        step =
+          this.maxStep > 0 && distToClosestObj > this.maxStep
+            ? this.maxStep
+            : distToClosestObj;
+        leftOverDist = distToClosestObj - this.maxStep;
+      } else {
+        step = this.maxStep;
+        leftOverDist -= this.maxStep;
+      }
       this.path.push({ pos: this.pos.copy(), step: step });
 
       if (step < this.collisionTolerance) {
