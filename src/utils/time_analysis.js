@@ -21,12 +21,12 @@ class TimeAnalysis {
 
   startTime(cls, action) {
     this.safeAddTime(cls, action);
-    this.times.get(cls)[action].start = Date.now();
+    this.times.get(cls)[action].start = performance.now();
   }
 
   endTime(cls, action) {
     const currAction = this.times.get(cls)[action];
-    currAction.totalTime += Date.now() - currAction.start;
+    currAction.totalTime += performance.now() - currAction.start;
     currAction.calls++;
   }
 
