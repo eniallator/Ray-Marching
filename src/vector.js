@@ -3,40 +3,68 @@ class Vector {
     this.setHead(xOrVec, y);
   }
 
-  arithmeticOperation(args, operation) {
+  pow(...args) {
     for (let arg of args) {
       if (arg > 0 || arg <= 0) {
-        this.x = operation(this.x, arg);
-        this.y = operation(this.y, arg);
+        this.x = this.x ** arg;
+        this.y = this.y ** arg;
       } else {
-        this.x = operation(this.x, arg.x);
-        this.y = operation(this.y, arg.y);
+        this.x = this.x ** arg.x;
+        this.y = this.y ** arg.y;
       }
     }
-  }
-
-  pow(...args) {
-    this.arithmeticOperation(args, (a, b) => a ** b);
     return this;
   }
 
   add(...args) {
-    this.arithmeticOperation(args, (a, b) => a + b);
+    for (let arg of args) {
+      if (arg > 0 || arg <= 0) {
+        this.x = this.x + arg;
+        this.y = this.y + arg;
+      } else {
+        this.x = this.x + arg.x;
+        this.y = this.y + arg.y;
+      }
+    }
     return this;
   }
 
   sub(...args) {
-    this.arithmeticOperation(args, (a, b) => a - b);
+    for (let arg of args) {
+      if (arg > 0 || arg <= 0) {
+        this.x = this.x - arg;
+        this.y = this.y - arg;
+      } else {
+        this.x = this.x - arg.x;
+        this.y = this.y - arg.y;
+      }
+    }
     return this;
   }
 
   multiply(...args) {
-    this.arithmeticOperation(args, (a, b) => a * b);
+    for (let arg of args) {
+      if (arg > 0 || arg <= 0) {
+        this.x = this.x * arg;
+        this.y = this.y * arg;
+      } else {
+        this.x = this.x * arg.x;
+        this.y = this.y * arg.y;
+      }
+    }
     return this;
   }
 
   divide(...args) {
-    this.arithmeticOperation(args, (a, b) => a / b);
+    for (let arg of args) {
+      if (arg > 0 || arg <= 0) {
+        this.x = this.x / arg;
+        this.y = this.y / arg;
+      } else {
+        this.x = this.x / arg.x;
+        this.y = this.y / arg.y;
+      }
+    }
     return this;
   }
 

@@ -65,9 +65,12 @@ class Ray {
       } else {
         const offset = this.dirNorm.copy().multiply(step);
         this.pos.add(offset);
-        this.dirNorm = this.dirNorm
-          .add(scene.getForceAt(this.pos).multiply(this.forceInfluence, step))
-          .getNorm();
+
+        if (this.forceInfluence !== 0) {
+          this.dirNorm = this.dirNorm
+            .add(scene.getForceAt(this.pos).multiply(this.forceInfluence, step))
+            .getNorm();
+        }
       }
     }
   }
