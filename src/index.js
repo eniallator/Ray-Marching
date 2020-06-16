@@ -29,6 +29,7 @@ window.onresize = (evt) => {
 
     paramConfig.tellListeners();
   }
+  ctx.strokeStyle = "white";
 };
 window.onresize();
 
