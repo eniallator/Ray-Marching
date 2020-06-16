@@ -31,6 +31,7 @@ class Light {
 
     this.recastRays = true;
     this.diffTolerance = 50;
+    this.angleTolerance = 0.01;
   }
 
   setPos(pos) {
@@ -42,6 +43,16 @@ class Light {
   setUseMesh(value) {
     this.recastRays = this.recastRays || this.useMesh !== value;
     this.useMesh = value;
+  }
+
+  _cosineLaw(p1, p2, p3) {
+    const aSqr = p1.copy().sub(p2).getSquaredMagnitude();
+    const bSqr = p1.copy().sub(p3).getSquaredMagnitude();
+    const cSqr = p2.copy().sub(p3).getSquaredMagnitude();
+
+    return Math.acos(
+      (aSqr + bSqr - cSqr) / (2 * Math.sqrt(aSqr) * Math.sqrt(bSqr))
+    );
   }
 
   createMesh() {
@@ -58,9 +69,27 @@ class Light {
       );
       const diff = rayLength - nextRayLength;
       const bigger = diff > 0 ? ray : nextRay;
-
       this.meshPoints.push(ray.collisionPoints[0].pos);
 
+      let prevPoint = this.meshPoints[this.meshPoints.length - 2];
+      if (prevPoint && prevPoint.x === undefined) {
+        prevPoint = prevPoint[prevPoint.length - 1];
+      }
+      if (
+        prevPoint !== undefined &&
+        (this._cosineLaw(
+          prevPoint,
+          ray.collisionPoints[0].pos,
+          nextRay.collisionPoints[0].pos
+        ) < this.angleTolerance ||
+          this._cosineLaw(
+            ray.collisionPoints[0].pos,
+            nextRay.collisionPoints[0].pos,
+            this.rays[(i + 2) % this.rays.length].collisionPoints[0].pos
+          ) < this.angleTolerance)
+      ) {
+        continue;
+      }
       const newPoints = [];
       let currStep = 0;
       for (let j = bigger.path.length - 1; j >= 0; j--) {
