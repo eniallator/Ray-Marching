@@ -61,7 +61,7 @@ class Light {
 
       this.meshPoints.push(ray.collisionPoints[0].pos);
 
-      let newPoints = [];
+      const newPoints = [];
       let currStep = 0;
       for (let j = bigger.path.length - 1; j >= 0; j--) {
         const curr = bigger.path[j];
@@ -80,10 +80,13 @@ class Light {
         newPoints.push(curr.pos);
       }
       if (rayLength < nextRayLength) {
-        newPoints = newPoints.reverse();
+        this.meshPoints.push(newPoints.reverse());
+      } else {
+        this.meshPoints.push(newPoints);
       }
-      this.meshPoints = [...this.meshPoints, ...newPoints];
     }
+
+    this.meshPoints = this.meshPoints.flat();
   }
 
   drawMesh(ctx, lightRadius) {
