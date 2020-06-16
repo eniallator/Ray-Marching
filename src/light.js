@@ -13,6 +13,7 @@ class Light {
     initialAngle = initialAngle || 0;
 
     this.pos = pos.copy();
+    this.forceInfluence = forceInfluence;
     this.rays = new Array(numRays)
       .fill()
       .map(
@@ -70,6 +71,10 @@ class Light {
       const diff = rayLength - nextRayLength;
       const bigger = diff > 0 ? ray : nextRay;
       this.meshPoints.push(ray.collisionPoints[0].pos);
+
+      if (!this.forceInfluence) {
+        continue;
+      }
 
       let prevPoint = this.meshPoints[this.meshPoints.length - 2];
       if (prevPoint && prevPoint.x === undefined) {
