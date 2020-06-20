@@ -56,12 +56,37 @@ class Light {
     );
   }
 
+  createMeshBetween(bigger, rayLength, nextRayLength) {
+    const newPoints = [];
+    let currStep = 0;
+    for (let i = bigger.path.length - 1; i >= 0; i--) {
+      const curr = bigger.path[i];
+      currStep += curr.step;
+
+      if (currStep < this.diffTolerance) {
+        continue;
+      }
+      if (
+        Math.max(rayLength, nextRayLength) -
+          currStep -
+          Math.min(rayLength, nextRayLength) <
+        this.diffTolerance
+      ) {
+        break;
+      }
+      newPoints.push(curr.pos);
+    }
+    return rayLength < nextRayLength ? newPoints.reverse() : newPoints;
+  }
+
   createMesh() {
     this.meshPoints = [];
     this.rays.forEach((ray) => ray.cast(scene));
 
     for (let i = 0; i < this.rays.length; i++) {
       const ray = this.rays[i];
+      this.meshPoints.push(ray.collisionPoints[0].pos);
+
       const rayLength = ray.path.reduce((acc, item) => acc + item.step, 0);
       const nextRay = this.rays[(i + 1) % this.rays.length];
       const nextRayLength = nextRay.path.reduce(
@@ -70,7 +95,6 @@ class Light {
       );
       const diff = rayLength - nextRayLength;
       const bigger = diff > 0 ? ray : nextRay;
-      this.meshPoints.push(ray.collisionPoints[0].pos);
 
       if (!this.forceInfluence) {
         continue;
@@ -81,42 +105,23 @@ class Light {
         prevPoint = prevPoint[prevPoint.length - 1];
       }
       if (
-        prevPoint !== undefined &&
-        (this._cosineLaw(
-          prevPoint,
-          ray.collisionPoints[0].pos,
-          nextRay.collisionPoints[0].pos
-        ) < this.angleTolerance ||
+        prevPoint === undefined ||
+        !(
+          this._cosineLaw(
+            prevPoint,
+            ray.collisionPoints[0].pos,
+            nextRay.collisionPoints[0].pos
+          ) < this.angleTolerance ||
           this._cosineLaw(
             ray.collisionPoints[0].pos,
             nextRay.collisionPoints[0].pos,
             this.rays[(i + 2) % this.rays.length].collisionPoints[0].pos
-          ) < this.angleTolerance)
+          ) < this.angleTolerance
+        )
       ) {
-        continue;
-      }
-      const newPoints = [];
-      let currStep = 0;
-      for (let j = bigger.path.length - 1; j >= 0; j--) {
-        const curr = bigger.path[j];
-        currStep += curr.step;
-        if (currStep < this.diffTolerance) {
-          continue;
-        }
-        if (
-          Math.max(rayLength, nextRayLength) -
-            currStep -
-            Math.min(rayLength, nextRayLength) <
-          this.diffTolerance
-        ) {
-          break;
-        }
-        newPoints.push(curr.pos);
-      }
-      if (rayLength < nextRayLength) {
-        this.meshPoints.push(newPoints.reverse());
-      } else {
-        this.meshPoints.push(newPoints);
+        this.meshPoints.push(
+          this.createMeshBetween(bigger, rayLength, nextRayLength)
+        );
       }
     }
 
