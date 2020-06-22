@@ -68,6 +68,17 @@ const parameterConfig = [
     },
   },
   {
+    id: "speed-multiplier",
+    label: "Speed multiplier",
+    default: 1,
+    type: "number",
+    attrs: {
+      min: 0.25,
+      max: 3,
+      step: 0.25,
+    },
+  },
+  {
     id: "ray-angle-offset",
     label: "Ray angle offset",
     default: 0,
