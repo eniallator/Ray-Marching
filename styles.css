@@ -12,6 +12,7 @@ input[type="number"] {
   position: absolute;
   left: 0.5rem;
   bottom: 0.5rem;
+  margin-bottom: 0.25rem !important;
 }
 
 .config-item {
@@ -33,4 +34,8 @@ input[type="number"] {
 #canvas {
   width: 100%;
   height: calc(100% - 6px);
+}
+
+.menu-offset {
+  margin-bottom: 0.4rem !important;
 }
