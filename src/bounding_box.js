@@ -13,12 +13,12 @@ class BoundingBox {
     return this.pos.y;
   }
 
-  vectorInside(vec) {
+  vectorInside(vec, radius = 0) {
     return (
-      vec.x >= this.pos.x &&
-      vec.x <= this.pos.x + this.width &&
-      vec.y >= this.pos.y &&
-      vec.y <= this.pos.y + this.height
+      vec.x - radius >= this.pos.x &&
+      vec.x + radius <= this.pos.x + this.width &&
+      vec.y - radius >= this.pos.y &&
+      vec.y + radius <= this.pos.y + this.height
     );
   }
 }

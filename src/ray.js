@@ -38,7 +38,7 @@ class Ray {
 
     while (
       reflections <= this.maxReflections &&
-      (this.inBounds = scene.checkInBounds(this.pos))
+      (this.inBounds = scene.checkInBounds(this.pos, this.collisionTolerance))
     ) {
       if (this.maxStep <= 0 || leftOverDist < this.maxStep) {
         const distToClosestObj = scene.distanceEstimator(this.pos);

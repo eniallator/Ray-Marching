@@ -46,8 +46,8 @@ class Scene {
     }
   }
 
-  checkInBounds(vec) {
-    return this.rect.box.vectorInside(vec);
+  checkInBounds(vec, radius = 0) {
+    return this.rect.box.vectorInside(vec, radius);
   }
 
   _getClosestObj(vec) {
