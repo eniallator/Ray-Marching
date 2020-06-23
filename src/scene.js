@@ -49,15 +49,13 @@ class Scene {
     return this.rect.box.vectorInside(vec, radius);
   }
 
-  _getClosestObj(vec) {
+  getClosestObject(vec) {
     return this.objectList.reduce((closest, curr) => {
-      const d = curr.distanceEstimator(vec);
-      return closest === 1 || d < closest.d ? { obj: curr, d: d } : closest;
+      const dist = curr.distanceEstimator(vec);
+      return closest === 1 || dist < closest.dist
+        ? { closestObj: curr, dist: dist }
+        : closest;
     }, 1);
-  }
-
-  getColour(vec) {
-    return this._getClosestObj(vec).obj.getColour(vec);
   }
 
   getForceAt(vec) {
@@ -70,16 +68,6 @@ class Scene {
         Vector.ZERO.copy()
       )
       .divide(this.objectList.length);
-  }
-
-  getClosestSurfaceNormal(vec) {
-    return this._getClosestObj(vec).obj.getSurfaceNormal(vec);
-  }
-
-  distanceEstimator(vec) {
-    const distances = this.objectList.map((obj) => obj.distanceEstimator(vec));
-
-    return Math.max(0, Math.min(...distances));
   }
 
   draw(ctx) {
