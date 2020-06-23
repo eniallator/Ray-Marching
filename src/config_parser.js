@@ -52,13 +52,12 @@ class ParamConfig {
       );
 
       const typeCfg = paramTypes[cfgData.type];
-      const stateKey = cfgData.id;
-      this.state[stateKey] = {
+      this.state[cfgData.id] = {
         tag: inpTag,
         serialise: typeCfg.serialise,
         default: cfgData.default,
       };
-      const inpTagChange = typeCfg.change(stateKey, this.state);
+      const inpTagChange = typeCfg.change(cfgData.id, this.state);
       inpTag.change((evt) => {
         this.updates.push(cfgData.id);
         inpTagChange(evt);
@@ -75,19 +74,35 @@ class ParamConfig {
     }
   }
 
-  addListener(listener) {
-    this.listeners.push(listener);
+  addListener(listener, updateSubscriptions = undefined) {
+    const cleanedUpdates = (
+      updateSubscriptions || Object.keys(this.state)
+    ).filter((update) => this.state[update] !== undefined);
+
+    this.listeners.push({ listener: listener, updates: cleanedUpdates });
     this.tellListeners();
   }
 
-  tellListeners() {
-    for (let listener of this.listeners) {
-      const stateCopy = {};
-      for (let key in this.state) {
-        stateCopy[key] = this.state[key].val;
-      }
-      listener(stateCopy, this.updates);
+  tellListeners(force = false) {
+    if (!force && this.updates === []) {
+      return;
     }
+
+    this.listeners.forEach((item) => {
+      let relevantUpdates = item.updates.filter((update) =>
+        this.updates.includes(update)
+      );
+
+      if (force || relevantUpdates.length > 0) {
+        const stateCopy = {};
+        for (let key in this.state) {
+          stateCopy[key] = this.state[key].val;
+        }
+
+        item.listener(stateCopy, relevantUpdates);
+      }
+    });
+
     this.updates = [];
   }
 

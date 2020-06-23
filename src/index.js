@@ -103,17 +103,26 @@ paramConfig.addListener((state, updates) => {
       )
     );
   }
+});
 
-  if (updates.includes("show-mandelbrot")) {
-    scene = new Scene(
+paramConfig.addListener(
+  (state) =>
+    (scene = new Scene(
       0,
       0,
       canvas.width,
       canvas.height,
-      paramConfig.getVal("show-mandelbrot")
-    );
-  }
-});
+      state["show-mandelbrot"]
+    )),
+  ["show-mandelbrot"]
+);
+
+paramConfig.addListener(
+  (state, updates) => {
+    scene.setNumObjects(paramConfig.getVal("num-objects"));
+  },
+  ["num-objects"]
+);
 
 function run() {
   ctx.globalCompositeOperation = "darken";
@@ -126,7 +135,6 @@ function run() {
 
   const totalTime = timeToRepeat / paramConfig.getVal("speed-multiplier");
 
-  scene.setNumObjects(paramConfig.getVal("num-objects"));
   scene.draw(ctx);
 
   lights.forEach((light) => light.setUseMesh(paramConfig.getVal("mesh")));
@@ -161,4 +169,5 @@ function run() {
   requestAnimationFrame(run);
 }
 
+paramConfig.tellListeners(true);
 run();

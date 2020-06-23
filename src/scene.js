@@ -36,11 +36,10 @@ class Scene {
       return;
     }
 
-    const numWithRect = num + 1;
-    if (numWithRect < this.objectList.length) {
-      this.objectList = this.objectList.slice(0, numWithRect);
+    if (num < this.objectList.length) {
+      this.objectList = this.objectList.slice(0, num);
     } else {
-      for (let i = this.objectList.length - 1; i < numWithRect; i++) {
+      for (let i = this.objectList.length - 1; i < num; i++) {
         this.addRandomObject();
       }
     }
