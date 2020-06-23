@@ -85,7 +85,6 @@ class Light {
 
     for (let i = 0; i < this.rays.length; i++) {
       const ray = this.rays[i];
-      this.meshPoints.push(ray.collisionPoints[0].pos);
 
       const rayLength = ray.path.reduce((acc, item) => acc + item.step, 0);
       const nextRay = this.rays[(i + 1) % this.rays.length];
@@ -96,6 +95,14 @@ class Light {
       const diff = rayLength - nextRayLength;
       const bigger = diff > 0 ? ray : nextRay;
 
+      const currPoint = ray.collisionPoints[0]
+        ? ray.collisionPoints[0].pos
+        : ray.pos;
+      const nextPoint = nextRay.collisionPoints[0]
+        ? nextRay.collisionPoints[0].pos
+        : nextRay.pos;
+
+      this.meshPoints.push(currPoint);
       if (!this.forceInfluence) {
         continue;
       }
@@ -107,14 +114,11 @@ class Light {
       if (
         prevPoint === undefined ||
         !(
+          this._cosineLaw(prevPoint, currPoint, nextPoint) <
+            this.angleTolerance ||
           this._cosineLaw(
-            prevPoint,
-            ray.collisionPoints[0].pos,
-            nextRay.collisionPoints[0].pos
-          ) < this.angleTolerance ||
-          this._cosineLaw(
-            ray.collisionPoints[0].pos,
-            nextRay.collisionPoints[0].pos,
+            currPoint,
+            nextPoint,
             this.rays[(i + 2) % this.rays.length].collisionPoints[0].pos
           ) < this.angleTolerance
         )
