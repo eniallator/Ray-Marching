@@ -80,6 +80,22 @@ class Ray {
     }
   }
 
+  drawLineInbetween(ctx, curr, prev, sign) {
+    if (
+      prev === undefined ||
+      this.curveInfluence === 0 ||
+      this.curveInfluence < 0
+    ) {
+      ctx.lineTo(curr.x, curr.y);
+    } else {
+      const offset = prev.copy().sub(curr).multiply(this.curveInfluence);
+      offset.setAngle(offset.getAngle() + sign * (Math.PI / 2));
+      const pt1 = prev.copy().add(offset);
+      const pt2 = curr.copy().add(offset);
+      ctx.bezierCurveTo(pt1.x, pt1.y, pt2.x, pt2.y, curr.x, curr.y);
+    }
+  }
+
   draw(ctx) {
     // for (let item of this.path) {
     //   if (item.step >= this.collisionTolerance) {
@@ -95,20 +111,15 @@ class Ray {
     let prevPos;
     for (let i = 0; i < this.path.length; i++) {
       const item = this.path[i];
-      if (i == 0 || !this.curveInfluence || this.curveInfluence < 0) {
-        ctx.lineTo(item.pos.x, item.pos.y);
-      } else {
-        const offset = prevPos
-          .copy()
-          .sub(item.pos)
-          .multiply(this.curveInfluence);
-        offset.setAngle(offset.getAngle() + (((i % 2) * 2 - 1) * Math.PI) / 2);
-        const pt1 = prevPos.copy().add(offset);
-        const pt2 = item.pos.copy().add(offset);
-        ctx.bezierCurveTo(pt1.x, pt1.y, pt2.x, pt2.y, item.pos.x, item.pos.y);
-      }
+      this.drawLineInbetween(ctx, item.pos, prevPos, (i % 2) * 2 - 1);
       prevPos = item.pos;
     }
+    this.drawLineInbetween(
+      ctx,
+      this.pos,
+      prevPos,
+      (this.path.length % 2) * 2 - 1
+    );
     ctx.lineTo(this.pos.x, this.pos.y);
     ctx.stroke();
 
