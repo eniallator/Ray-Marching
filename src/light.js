@@ -119,7 +119,9 @@ class Light {
           this._cosineLaw(
             currPoint,
             nextPoint,
-            this.rays[(i + 2) % this.rays.length].collisionPoints[0].pos
+            this.rays[(i + 2) % this.rays.length].collisionPoints[0]
+              ? this.rays[(i + 2) % this.rays.length].collisionPoints[0].pos
+              : this.rays[(i + 2) % this.rays.length].pos
           ) < this.angleTolerance
         )
       ) {
