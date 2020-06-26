@@ -53,7 +53,7 @@ class Scene {
     return this.objectList.reduce((closest, curr) => {
       const dist = curr.distanceEstimator(vec);
       return closest === 1 || dist < closest.dist
-        ? { closestObj: curr, dist: dist }
+        ? { obj: curr, dist: dist }
         : closest;
     }, 1);
   }

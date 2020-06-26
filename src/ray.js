@@ -35,13 +35,20 @@ class Ray {
     let step = this.collisionTolerance;
     let reflections = 0;
     let leftOverDist = 0;
+    let closestObj;
 
     while (
       reflections <= this.maxReflections &&
       (this.inBounds = scene.checkInBounds(this.pos, this.collisionTolerance))
     ) {
-      const { closestObj, dist } = scene.getClosestObject(this.pos);
-      step = this.maxStep > 0 && dist > this.maxStep ? this.maxStep : dist;
+      if (this.maxStep > 0 && leftOverDist >= this.maxStep) {
+        leftOverDist -= step = this.maxStep;
+      } else {
+        const { obj, dist } = scene.getClosestObject(this.pos);
+        step = this.maxStep > 0 && dist > this.maxStep ? this.maxStep : dist;
+        leftOverDist = dist - step;
+        closestObj = obj;
+      }
 
       this.path.push({ pos: this.pos.copy(), step: step });
 
@@ -75,9 +82,11 @@ class Ray {
 
   draw(ctx) {
     // for (let item of this.path) {
-    //   ctx.beginPath();
-    //   ctx.arc(item.pos.x, item.pos.y, item.step, 0, 2 * Math.PI);
-    //   ctx.stroke();
+    //   if (item.step >= this.collisionTolerance) {
+    //     ctx.beginPath();
+    //     ctx.arc(item.pos.x, item.pos.y, item.step, 0, 2 * Math.PI);
+    //     ctx.stroke();
+    //   }
     // }
 
     ctx.beginPath();
