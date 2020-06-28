@@ -108,18 +108,20 @@ class Ray {
     ctx.beginPath();
     ctx.moveTo(this.initialPos.x, this.initialPos.y);
 
-    let prevPos;
-    for (let i = 0; i < this.path.length; i++) {
-      const item = this.path[i];
-      this.drawLineInbetween(ctx, item.pos, prevPos, (i % 2) * 2 - 1);
-      prevPos = item.pos;
+    if (this.curveInfluence || this.forceInfluence) {
+      let prevPos;
+      for (let i = 0; i < this.path.length; i++) {
+        const item = this.path[i];
+        this.drawLineInbetween(ctx, item.pos, prevPos, (i % 2) * 2 - 1);
+        prevPos = item.pos;
+      }
+      this.drawLineInbetween(
+        ctx,
+        this.pos,
+        prevPos,
+        (this.path.length % 2) * 2 - 1
+      );
     }
-    this.drawLineInbetween(
-      ctx,
-      this.pos,
-      prevPos,
-      (this.path.length % 2) * 2 - 1
-    );
     ctx.lineTo(this.pos.x, this.pos.y);
     ctx.stroke();
 
