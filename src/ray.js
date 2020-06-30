@@ -108,7 +108,7 @@ class Ray {
     ctx.beginPath();
     ctx.moveTo(this.initialPos.x, this.initialPos.y);
 
-    if (this.curveInfluence || this.forceInfluence) {
+    if (this.curveInfluence || this.forceInfluence || this.maxReflections) {
       let prevPos;
       for (let i = 0; i < this.path.length; i++) {
         const item = this.path[i];
