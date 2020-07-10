@@ -18,6 +18,12 @@ const parameterConfig = [
     type: "checkbox",
   },
   {
+    id: "visualise-steps",
+    label: "Visualise ray steps",
+    default: false,
+    type: "checkbox",
+  },
+  {
     id: "num-objects",
     label: "Number of objects",
     default: 10,

@@ -5,7 +5,8 @@ class Ray {
     maxReflections,
     forceInfluence,
     maxStep,
-    curveInfluence
+    curveInfluence,
+    visualiseSteps
   ) {
     this.initialPos = pos.copy();
     this.pos = pos.copy();
@@ -15,6 +16,7 @@ class Ray {
     this.forceInfluence = forceInfluence;
     this.maxStep = maxStep;
     this.curveInfluence = curveInfluence;
+    this.visualiseSteps = visualiseSteps;
 
     this.collisionTolerance = 0.1;
   }
@@ -97,13 +99,15 @@ class Ray {
   }
 
   draw(ctx) {
-    // for (let item of this.path) {
-    //   if (item.step >= this.collisionTolerance) {
-    //     ctx.beginPath();
-    //     ctx.arc(item.pos.x, item.pos.y, item.step, 0, 2 * Math.PI);
-    //     ctx.stroke();
-    //   }
-    // }
+    if (this.visualiseSteps) {
+      for (let item of this.path) {
+        if (item.step >= this.collisionTolerance) {
+          ctx.beginPath();
+          ctx.arc(item.pos.x, item.pos.y, item.step, 0, 2 * Math.PI);
+          ctx.stroke();
+        }
+      }
+    }
 
     ctx.beginPath();
     ctx.moveTo(this.initialPos.x, this.initialPos.y);

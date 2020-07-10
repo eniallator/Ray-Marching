@@ -6,6 +6,7 @@ class Light {
     forceInfluence,
     maxStep,
     curveInfluence,
+    visualiseSteps,
     initialAngle,
     initialFov
   ) {
@@ -26,7 +27,8 @@ class Light {
             maxReflections,
             forceInfluence,
             maxStep,
-            curveInfluence
+            curveInfluence,
+            visualiseSteps
           )
       );
 

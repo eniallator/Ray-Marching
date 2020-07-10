@@ -99,7 +99,8 @@ paramConfig.addListener((state, updates) => {
         paramConfig.getVal("max-reflections"),
         paramConfig.getVal("force-influence"),
         paramConfig.getVal("max-step"),
-        paramConfig.getVal("curve-influence")
+        paramConfig.getVal("curve-influence"),
+        paramConfig.getVal("visualise-steps")
       )
     );
   }
