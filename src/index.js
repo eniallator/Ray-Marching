@@ -158,6 +158,7 @@ function run() {
       light.shine(
         scene,
         ctx,
+        paramConfig.getVal("brightness"),
         paramConfig.getVal("light-radius") * canvasDiagonal
       );
     });

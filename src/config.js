@@ -85,6 +85,17 @@ const parameterConfig = [
     },
   },
   {
+    id: "brightness",
+    label: "Brightness",
+    default: 1,
+    type: "range",
+    attrs: {
+      min: 0,
+      max: 1,
+      step: 0.01,
+    },
+  },
+  {
     id: "ray-angle-offset",
     label: "Ray angle offset",
     default: 0,

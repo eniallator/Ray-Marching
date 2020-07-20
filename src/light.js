@@ -136,7 +136,7 @@ class Light {
     this.meshPoints = this.meshPoints.flat();
   }
 
-  drawMesh(ctx, lightRadius) {
+  drawMesh(ctx, brightness, lightRadius) {
     const gradient = ctx.createRadialGradient(
       this.pos.x,
       this.pos.y,
@@ -146,7 +146,7 @@ class Light {
       lightRadius
     );
 
-    gradient.addColorStop(0, "#707070");
+    gradient.addColorStop(0, this.brightnessToHSL(brightness));
     gradient.addColorStop(1, "black");
     ctx.fillStyle = gradient;
 
@@ -170,21 +170,28 @@ class Light {
     this.posUpdated = false;
   }
 
-  draw(ctx, lightRadius) {
+  brightnessToHSL(brightness) {
+    return `hsl(0, 0%, ${Math.round(100 * brightness)}%)`;
+  }
+
+  draw(ctx, brightness, lightRadius) {
     if (this.useMesh) {
-      this.drawMesh(ctx, lightRadius);
+      this.drawMesh(ctx, brightness, lightRadius);
     } else {
+      const strokeStyle = ctx.strokeStyle;
+      ctx.strokeStyle = this.brightnessToHSL(brightness);
       for (let ray of this.rays) {
         ray.draw(ctx);
       }
+      ctx.strokeStyle = strokeStyle;
     }
   }
 
-  shine(scene, ctx, lightRadius, forceRecast) {
+  shine(scene, ctx, brightness, lightRadius, forceRecast) {
     if (this.recastRays || forceRecast) {
       this.cast(scene);
       this.recastRays = false;
     }
-    this.draw(ctx, lightRadius);
+    this.draw(ctx, brightness, lightRadius);
   }
 }
