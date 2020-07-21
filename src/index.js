@@ -134,8 +134,6 @@ function run() {
     ? "lighten"
     : "source-over";
 
-  const totalTime = timeToRepeat / paramConfig.getVal("speed-multiplier");
-
   scene.draw(ctx);
 
   lights.forEach((light) => light.setUseMesh(paramConfig.getVal("mesh")));
@@ -148,7 +146,7 @@ function run() {
       paramConfig.getVal("light-radius") * canvasDiagonal
     );
   } else {
-    const percentRound = currTime / totalTime;
+    const percentRound = currTime / timeToRepeat;
     const position = paramConfig.getVal("use-mouse")
       ? mouse
       : getNoiseCoordinates(percentRound);
@@ -165,7 +163,10 @@ function run() {
   }
 
   const now = new Date().getTime();
-  currTime = (currTime + now - prevTime) % totalTime;
+  currTime =
+    currTime +
+    (((now - prevTime) * paramConfig.getVal("speed-multiplier")) %
+      timeToRepeat);
   prevTime = now;
 
   requestAnimationFrame(run);
