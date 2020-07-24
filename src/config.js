@@ -39,7 +39,7 @@ const parameterConfig = [
     default: 1,
     type: "number",
     attrs: {
-      min: 0,
+      min: 1,
       max: 10,
     },
   },
