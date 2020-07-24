@@ -24,5 +24,6 @@ class InsideRectangle extends Rectangle {
   getForceAt(vec, gravityFallOff) {
     return super.getForceAt(vec, gravityFallOff).multiply(-1);
   }
+
   draw(ctx) {}
 }

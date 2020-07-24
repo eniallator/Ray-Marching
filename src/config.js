@@ -54,8 +54,8 @@ const parameterConfig = [
     },
   },
   {
-    id: "max-reflections",
-    label: "Max reflections",
+    id: "max-bounces",
+    label: "Max bounces",
     default: 0,
     type: "number",
     attrs: {

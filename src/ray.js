@@ -2,7 +2,7 @@ class Ray {
   constructor(
     pos,
     dirNorm,
-    maxReflections,
+    maxBounces,
     forceInfluence,
     maxStep,
     curveInfluence,
@@ -12,7 +12,7 @@ class Ray {
     this.pos = pos.copy();
     this.initialDir = dirNorm.copy();
     this.dirNorm = dirNorm;
-    this.maxReflections = maxReflections;
+    this.maxBounces = maxBounces;
     this.forceInfluence = forceInfluence;
     this.maxStep = maxStep;
     this.curveInfluence = curveInfluence;
@@ -32,41 +32,92 @@ class Ray {
     this.initialPos = pos.copy();
   }
 
+  posMod(a, b) {
+    return ((a % b) + b) % b;
+  }
+
   cast(scene) {
     this.reset();
     let step = this.collisionTolerance;
-    let reflections = 0;
+    let bounces = 0;
     let leftOverDist = 0;
-    let closestObj;
+    let pathLength = 0;
+    let closestObj, refractiveIndex, closestRefractiveIndex;
 
     while (
-      reflections <= this.maxReflections &&
+      bounces <= this.maxBounces &&
       (this.inBounds = scene.checkInBounds(this.pos, this.collisionTolerance))
     ) {
       if (this.maxStep > 0 && leftOverDist >= this.maxStep) {
         leftOverDist -= step = this.maxStep;
       } else {
-        const { obj, dist } = scene.getClosestObject(this.pos);
+        const {
+          obj,
+          dist: rawDist,
+          refractiveIndex: newRefractiveIndex,
+        } = scene.getClosestObject(this.pos, -this.collisionTolerance);
+        let dist = rawDist;
+        if (
+          refractiveIndex !== undefined &&
+          obj.material.refractiveIndex === refractiveIndex
+        ) {
+          dist *= -1;
+        }
+
+        if (refractiveIndex === undefined) {
+          refractiveIndex =
+            rawDist <= this.collisionTolerance
+              ? obj.material.refractiveIndex
+              : scene.refractiveIndex;
+        }
+
         step = this.maxStep > 0 && dist > this.maxStep ? this.maxStep : dist;
         leftOverDist = dist - step;
         closestObj = obj;
+        closestRefractiveIndex = newRefractiveIndex;
       }
 
       this.path.push({ pos: this.pos.copy(), step: step });
+      pathLength += step;
 
       if (step < this.collisionTolerance) {
-        if (++reflections <= this.maxReflections) {
+        if (
+          closestObj.material.refractiveIndex !== undefined &&
+          refractiveIndex !== closestRefractiveIndex
+        ) {
+          bounces++;
+          this.collisionPoints.push({
+            pos: this.pos.copy(),
+            colour: closestObj.getColour(this.pos),
+            inBounds: scene.checkInBounds(this.pos),
+          });
           const surfaceNormal = closestObj.getSurfaceNormal(this.pos);
-          this.dirNorm = this.dirNorm.sub(
-            surfaceNormal.copy().multiply(2 * this.dirNorm.dot(surfaceNormal))
+          let boundaryNormal = surfaceNormal;
+          const angleDiff = this.posMod(
+            this.dirNorm.getAngle() - surfaceNormal.getAngle(),
+            2 * Math.PI
           );
-        }
+          if (angleDiff > Math.PI / 2 && angleDiff < (Math.PI * 3) / 2) {
+            boundaryNormal = surfaceNormal.copy().multiply(-1);
+          }
+          const boundaryAngle = boundaryNormal.getAngle();
+          const angleOfRefraction = Math.asin(
+            (refractiveIndex *
+              Math.sin(boundaryAngle - this.dirNorm.getAngle())) /
+              closestRefractiveIndex
+          );
 
-        this.collisionPoints.push({
-          pos: this.pos.copy(),
-          colour: closestObj.getColour(this.pos),
-          inBounds: scene.checkInBounds(this.pos),
-        });
+          if (angleOfRefraction > 0 || angleOfRefraction <= 0) {
+            this.dirNorm = new Vector(1, 0).setAngle(
+              boundaryAngle - angleOfRefraction
+            );
+            refractiveIndex = closestRefractiveIndex;
+          } else {
+            this.dirNorm = this.dirNorm.sub(
+              surfaceNormal.copy().multiply(2 * this.dirNorm.dot(surfaceNormal))
+            );
+          }
+        }
 
         this.pos.add(this.dirNorm.copy().multiply(this.collisionTolerance));
       } else {
@@ -112,7 +163,7 @@ class Ray {
     ctx.beginPath();
     ctx.moveTo(this.initialPos.x, this.initialPos.y);
 
-    if (this.curveInfluence || this.forceInfluence || this.maxReflections) {
+    if (this.curveInfluence || this.forceInfluence || this.maxBounces) {
       let prevPos;
       for (let i = 0; i < this.path.length; i++) {
         const item = this.path[i];

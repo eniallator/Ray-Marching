@@ -1,7 +1,8 @@
 class Scene {
-  constructor(x, y, width, height, showMandelbrot) {
+  constructor(x, y, width, height, showMandelbrot, refractiveIndex = 1.0003) {
     this.showMandelbrot = showMandelbrot;
     this.gravityFallOff = Math.sqrt(width * width + height * height);
+    this.refractiveIndex = refractiveIndex;
 
     this.rect = new InsideRectangle(new Clear(), x, y, width, height);
     this.objectList = [this.rect];
@@ -49,13 +50,26 @@ class Scene {
     return this.rect.box.vectorInside(vec, radius);
   }
 
-  getClosestObject(vec) {
+  getClosestObject(vec, tolerance) {
     return this.objectList.reduce((closest, curr) => {
       const dist = curr.distanceEstimator(vec);
-      return closest === 1 || dist < closest.dist
-        ? { obj: curr, dist: dist }
-        : closest;
-    }, 1);
+      return closest === null || dist < closest.dist
+        ? {
+            obj: curr,
+            dist: dist,
+            refractiveIndex:
+              dist < tolerance
+                ? curr.material.refractiveIndex
+                : this.refractiveIndex,
+          }
+        : {
+            ...closest,
+            refractiveIndex:
+              curr.material.refractiveIndex && dist < tolerance
+                ? curr.material.refractiveIndex
+                : closest.refractiveIndex,
+          };
+    }, null);
   }
 
   getForceAt(vec) {

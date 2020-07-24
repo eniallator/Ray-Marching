@@ -9,6 +9,15 @@ class Rectangle extends BaseObject {
   }
 
   distanceEstimator(vec) {
+    if (this.box.vectorInside(vec)) {
+      return vec
+        .copy()
+        .sub(this.center)
+        .abs()
+        .sub(new Vector(this.box.width / 2, this.box.height / 2))
+        .getMax();
+    }
+
     const dx = Math.max(
       this.box.x - vec.x,
       0,

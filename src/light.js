@@ -2,7 +2,7 @@ class Light {
   constructor(
     numRays,
     pos,
-    maxReflections,
+    maxBounces,
     forceInfluence,
     maxStep,
     curveInfluence,
@@ -24,7 +24,7 @@ class Light {
             new Vector(1, 0).setAngle(
               initialAngle + (((2 * i - numRays) / numRays) * initialFov) / 2
             ),
-            maxReflections,
+            maxBounces,
             forceInfluence,
             maxStep,
             curveInfluence,

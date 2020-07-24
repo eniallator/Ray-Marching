@@ -96,11 +96,12 @@ paramConfig.addListener((state, updates) => {
       new Light(
         paramConfig.getVal("num-rays"),
         Vector.ZERO.copy(),
-        paramConfig.getVal("max-reflections"),
+        paramConfig.getVal("max-bounces"),
         paramConfig.getVal("force-influence"),
         paramConfig.getVal("max-step"),
         paramConfig.getVal("curve-influence"),
-        paramConfig.getVal("visualise-steps")
+        paramConfig.getVal("visualise-steps"),
+        paramConfig.getVal("ray-angle-offset") * 2 * Math.PI
       )
     );
   }

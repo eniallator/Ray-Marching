@@ -112,21 +112,26 @@ class Vector {
     return new Vector(this.x / magnitude, this.y / magnitude);
   }
 
+  abs() {
+    this.x = Math.abs(this.x);
+    this.y = Math.abs(this.y);
+    return this;
+  }
+
   getSign() {
-    const x = this.x ? this.x / Math.abs(this.x) : 1;
-    const y = this.y ? this.y / Math.abs(this.y) : 1;
+    const x = this.x >= 0 ? 1 : -1;
+    const y = this.y >= 0 ? 1 : -1;
     return new Vector(x, y);
   }
 
   getAngle() {
+    const x = this.x ? this.x : 0;
+    const y = this.y ? this.y : 0;
     const quadrants = {
-      "x:1,y:1": () => (!this.y ? 0 : Math.atan(this.y / this.x)),
-      "x:-1,y:1": () =>
-        !this.x ? Math.PI / 2 : Math.PI - Math.atan(this.y / -this.x),
-      "x:-1,y:-1": () =>
-        !this.y ? Math.PI : (Math.PI * 3) / 2 - Math.atan(this.x / this.y),
-      "x:1,y:-1": () =>
-        !this.y ? 0 : (Math.PI * 3) / 2 + Math.atan(this.x / -this.y),
+      "x:1,y:1": () => (!y ? 0 : Math.atan(y / x)),
+      "x:-1,y:1": () => (!x ? Math.PI / 2 : Math.PI - Math.atan(y / -x)),
+      "x:-1,y:-1": () => (!y ? Math.PI : (Math.PI * 3) / 2 - Math.atan(x / y)),
+      "x:1,y:-1": () => (!y ? 0 : (Math.PI * 3) / 2 + Math.atan(x / -y)),
     };
     return quadrants[this.getSign().toString()]();
   }
