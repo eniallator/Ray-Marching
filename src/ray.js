@@ -81,16 +81,18 @@ class Ray {
       pathLength += step;
 
       if (step < this.collisionTolerance) {
-        if (
+        this.collisionPoints.push({
+          pos: this.pos.copy(),
+          colour: closestObj.getColour(this.pos),
+          inBounds: scene.checkInBounds(this.pos),
+        });
+        if (closestObj.getSurfaceNormal === undefined) {
+          break;
+        } else if (
           closestObj.material.refractiveIndex !== undefined &&
           refractiveIndex !== closestRefractiveIndex
         ) {
           bounces++;
-          this.collisionPoints.push({
-            pos: this.pos.copy(),
-            colour: closestObj.getColour(this.pos),
-            inBounds: scene.checkInBounds(this.pos),
-          });
           const surfaceNormal = closestObj.getSurfaceNormal(this.pos);
           let boundaryNormal = surfaceNormal;
           const angleDiff = this.posMod(
