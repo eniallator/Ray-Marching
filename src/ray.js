@@ -55,7 +55,7 @@ class Ray {
           obj,
           dist: rawDist,
           refractiveIndex: newRefractiveIndex,
-        } = scene.getClosestObject(this.pos, -this.collisionTolerance);
+        } = scene.getClosestObject(this.pos);
         let dist = rawDist;
         if (
           refractiveIndex !== undefined &&

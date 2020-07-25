@@ -50,7 +50,7 @@ class Scene {
     return this.rect.box.vectorInside(vec, radius);
   }
 
-  getClosestObject(vec, tolerance) {
+  getClosestObject(vec) {
     return this.objectList.reduce((closest, curr) => {
       const dist = curr.distanceEstimator(vec);
       return closest === null || dist < closest.dist
@@ -58,14 +58,12 @@ class Scene {
             obj: curr,
             dist: dist,
             refractiveIndex:
-              dist < tolerance
-                ? curr.material.refractiveIndex
-                : this.refractiveIndex,
+              dist < 0 ? curr.material.refractiveIndex : this.refractiveIndex,
           }
         : {
             ...closest,
             refractiveIndex:
-              curr.material.refractiveIndex && dist < tolerance
+              curr.material.refractiveIndex && dist < 0
                 ? curr.material.refractiveIndex
                 : closest.refractiveIndex,
           };
