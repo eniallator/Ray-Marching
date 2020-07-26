@@ -1,10 +1,15 @@
 class Scene {
-  constructor(x, y, width, height, showMandelbrot, refractiveIndex = 1.0003) {
+  constructor(x, y, width, height, showMandelbrot, material) {
     this.showMandelbrot = showMandelbrot;
     this.gravityFallOff = Math.sqrt(width * width + height * height);
-    this.refractiveIndex = refractiveIndex;
 
-    this.rect = new InsideRectangle(new Clear(), x, y, width, height);
+    this.rect = new InsideRectangle(
+      material || new Clear(),
+      x,
+      y,
+      width,
+      height
+    );
     this.objectList = [this.rect];
 
     if (showMandelbrot) {
@@ -50,15 +55,18 @@ class Scene {
     return this.rect.box.vectorInside(vec, radius);
   }
 
-  getClosestObject(vec) {
+  getClosestObject(vec, refractiveIndex) {
     return this.objectList.reduce((closest, curr) => {
-      const dist = curr.distanceEstimator(vec);
+      let dist = curr.distanceEstimator(vec);
+
       return closest === null || dist < closest.dist
         ? {
             obj: curr,
             dist: dist,
             refractiveIndex:
-              dist < 0 ? curr.material.refractiveIndex : this.refractiveIndex,
+              dist < 0
+                ? curr.material.refractiveIndex
+                : this.rect.material.refractiveIndex,
           }
         : {
             ...closest,

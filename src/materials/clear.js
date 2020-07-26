@@ -1,6 +1,6 @@
 class Clear extends BaseMaterial {
   density = 0;
-  reflectable = false;
+  refractiveIndex = 1.0003;
 
   getColour(percent) {
     return "black";

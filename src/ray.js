@@ -42,7 +42,10 @@ class Ray {
     let bounces = 0;
     let leftOverDist = 0;
     let pathLength = 0;
-    let closestObj, refractiveIndex, closestRefractiveIndex;
+    let refractiveIndex = scene.getClosestObject(
+      this.pos.copy().sub(this.dirNorm.copy().multiply(2))
+    ).refractiveIndex;
+    let closestObj, closestRefractiveIndex;
 
     while (
       bounces <= this.maxBounces &&
@@ -55,20 +58,14 @@ class Ray {
           obj,
           dist: rawDist,
           refractiveIndex: newRefractiveIndex,
-        } = scene.getClosestObject(this.pos);
+        } = scene.getClosestObject(this.pos, refractiveIndex);
         let dist = rawDist;
         if (
           refractiveIndex !== undefined &&
-          obj.material.refractiveIndex === refractiveIndex
+          obj.material.refractiveIndex === refractiveIndex &&
+          refractiveIndex !== scene.rect.material.refractiveIndex
         ) {
           dist *= -1;
-        }
-
-        if (refractiveIndex === undefined) {
-          refractiveIndex =
-            rawDist <= this.collisionTolerance
-              ? obj.material.refractiveIndex
-              : scene.refractiveIndex;
         }
 
         step = this.maxStep > 0 && dist > this.maxStep ? this.maxStep : dist;

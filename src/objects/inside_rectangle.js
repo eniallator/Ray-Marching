@@ -1,17 +1,4 @@
 class InsideRectangle extends Rectangle {
-  distanceEstimator(vec) {
-    const dx = Math.min(
-      vec.x - this.box.x,
-      this.box.width + this.box.x - vec.x
-    );
-    const dy = Math.min(
-      vec.y - this.box.y,
-      this.box.height + this.box.y - vec.y
-    );
-
-    return Math.min(dx, dy);
-  }
-
   getColour(vec) {
     const percent = this.box.pos
       .copy()
@@ -23,6 +10,10 @@ class InsideRectangle extends Rectangle {
 
   getForceAt(vec, gravityFallOff) {
     return super.getForceAt(vec, gravityFallOff).multiply(-1);
+  }
+
+  distanceEstimator(vec) {
+    return -super.distanceEstimator(vec);
   }
 
   draw(ctx) {}
