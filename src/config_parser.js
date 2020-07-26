@@ -38,17 +38,20 @@ class ParamConfig {
           inpTag.attr(attr, cfgData.attrs[attr]);
         }
       }
+      const label = $(document.createElement("label"))
+        .attr("for", cfgData.id)
+        .text(cfgData.label);
+      if (cfgData.tooltip) {
+        label
+          .attr("data-toggle", "tooltip")
+          .attr("data-placement", "top")
+          .attr("title", cfgData.tooltip)
+          .tooltip();
+      }
       baseEl.append(
         $(document.createElement("div"))
           .addClass("config-item")
-          .append(
-            cfgData.label
-              ? $(document.createElement("label"))
-                  .attr("for", cfgData.id)
-                  .text(cfgData.label)
-              : "",
-            inpTag
-          )
+          .append(cfgData.label ? label : "", inpTag)
       );
 
       const typeCfg = paramTypes[cfgData.type];
