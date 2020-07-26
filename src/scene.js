@@ -1,3 +1,22 @@
+const MATERIALS = [Rainbow, Diamond, Glass];
+const OBJECTS = [
+  (material, box) =>
+    new Circle(
+      material,
+      box.x + Math.random() * box.width,
+      box.y + Math.random() * box.height,
+      Math.min(box.width, box.height) / 8
+    ),
+  (material, box) =>
+    new Rectangle(
+      material,
+      box.x + Math.random() * box.width,
+      box.y + Math.random() * box.height,
+      Math.min(box.width, box.height) / 8,
+      Math.min(box.width, box.height) / 8
+    ),
+];
+
 class Scene {
   constructor(x, y, width, height, showMandelbrot, material) {
     this.showMandelbrot = showMandelbrot;
@@ -27,15 +46,9 @@ class Scene {
   }
 
   addRandomObject() {
-    const objSize = Math.min(this.rect.box.width, this.rect.box.height) / 8;
-    const objX = this.rect.box.x + Math.random() * this.rect.box.width;
-    const objY = this.rect.box.y + Math.random() * this.rect.box.height;
-    const material = Math.random() < 0.5 ? new Glass() : new Rainbow();
-    this.objectList.push(
-      Math.random() < 0.5
-        ? new Circle(material, objX, objY, objSize)
-        : new Rectangle(material, objX, objY, objSize, objSize)
-    );
+    const obj = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
+    const mat = MATERIALS[Math.floor(Math.random() * MATERIALS.length)];
+    this.objectList.push(obj(new mat(), this.rect.box));
   }
 
   setNumObjects(num) {
