@@ -31,6 +31,8 @@ class Scene {
     );
     this.objectList = [this.rect];
 
+    // this.objectList.push(new Lens(new Rainbow(), width / 2, height / 2));
+
     if (showMandelbrot) {
       this.objectList.push(
         new Mandelbrot(
